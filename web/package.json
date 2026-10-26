@@ -9,10 +9,12 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test:lookup-route": "node scripts/check-lookup-route.mjs"
+    "test:lookup-route": "node scripts/check-lookup-route.mjs",
+    "check:security-floor": "node scripts/check-security-floor.mjs",
+    "smoke:production": "node scripts/smoke-production.mjs"
   },
   "dependencies": {
-    "next": "15.5.24",
+    "next": "15.5.28",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "server-only": "0.0.1"
