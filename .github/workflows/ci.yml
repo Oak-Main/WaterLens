@@ -42,6 +42,12 @@ jobs:
       - name: Build web app
         working-directory: web
         run: npm run build
+      - name: Test sitemap verifier failure paths
+        working-directory: web
+        run: npm run test:sitemap-verifier
+      - name: Verify built sitemap and canonical pages
+        working-directory: web
+        run: npm run test:sitemap
       - name: Smoke-test production web app
         working-directory: web
         run: npm run test:lookup-route
