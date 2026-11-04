@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test:lookup-route": "node scripts/check-lookup-route.mjs",
     "check:security-floor": "node scripts/check-security-floor.mjs",
-    "smoke:production": "node scripts/smoke-production.mjs"
+    "smoke:production": "node scripts/smoke-production.mjs",
+    "test:sitemap": "bash scripts/verify-sitemap.sh",
+    "test:sitemap-verifier": "python3 scripts/test_sitemap.py"
   },
   "dependencies": {
     "next": "15.5.28",
