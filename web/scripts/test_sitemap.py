@@ -5,7 +5,10 @@ import os
 import subprocess
 import tempfile
 import unittest
-from verify_sitemap import NS, REQUIRED_ROUTES
+
+# Keep contract fixtures independent of the implementation under test.
+NS = '{http://www.sitemaps.org/schemas/sitemap/0.9}'
+REQUIRED_ROUTES = {'/', '/registry', '/contaminants', '/pws', '/methodology', '/about', '/legal'}
 
 SCRIPT = Path(__file__).with_name('verify_sitemap.py')
 
@@ -56,6 +59,25 @@ class SitemapTests(unittest.TestCase):
         self.routes.append('/pws/EMPTY')
         self.write_sitemap()
         self.assertNotEqual(self.run_verifier().returncode, 0)
+
+    def test_duplicate_sitemap_url_fails(self):
+        self.routes.append('/about')
+        self.write_sitemap()
+        result = self.run_verifier()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('duplicate sitemap route', result.stderr)
+
+    def test_required_route_cannot_disappear_from_both_outputs(self):
+        self.routes.remove('/about')
+        self.write_sitemap()
+        path = self.build / 'prerender-manifest.json'
+        manifest = json.loads(path.read_text())
+        del manifest['routes']['/about']
+        path.write_text(json.dumps(manifest))
+        (self.app / 'about.html').unlink()
+        result = self.run_verifier()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('missing required static pages', result.stderr)
 
     def test_impossible_date_fails_under_optimization(self):
         self.write_sitemap(date='2026-02-30T00:00:00Z')
