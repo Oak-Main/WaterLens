@@ -75,7 +75,11 @@ try {
     [shortReport, /<title>[^<]*Water report for QA/],
     [flintReport, /<title>[^<]*Water report for Flint/],
   ]) {
-    const response = await fetch(`${origin}${path}`, { signal: AbortSignal.timeout(10000) });
+    const response = await fetch(`${origin}${path}`, {
+      // Next serves complete, non-JavaScript HTML to this user agent.
+      headers: { "User-Agent": "Twitterbot/1.0" },
+      signal: AbortSignal.timeout(10000),
+    });
     assert.equal(response.status, 200, `${path}: migrated page should load`);
     const html = await response.text();
     assert.match(html, title, `${path}: async parameters should reach metadata`);
@@ -88,7 +92,9 @@ try {
       const hardware = html.match(/<section\b[^>]*\bid="(?:hardware|filters)"[^>]*>[\s\S]*?<\/section>/i)?.[0];
       assert.ok(hardware, path + ": missing hardware section");
       const links = [...hardware.matchAll(/<a\b[^>]*\bhref="https:\/\/affil\.waterqualitylens\.com\/[^"]+"[^>]*>/gi)];
-      assert.ok(links.length, path + ": expected at least one filter retailer link");
+      assert.ok(links.length, path + ": expected a filter retailer link in the hardware section. Found " +
+        (html.match(/<a\b[^>]*\bhref="https:\/\/affil\.waterqualitylens\.com\//gi) ?? []).length +
+        " in the full response. Section ends with " + hardware.slice(-240));
       assert.doesNotMatch(hardware, /\[\[COPY:/i, path + ": editorial placeholder");
       assert.match(hardware.slice(0, links[0].index), /<p\b[^>]*role="note"[^>]*>[^<]*may earn a commission[^<]*<\/p>/i,
         path + ": missing commission disclosure before the first filter link");
