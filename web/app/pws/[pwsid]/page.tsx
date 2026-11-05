@@ -32,6 +32,7 @@ import {
   standardLabel,
   usd,
 } from "@/lib/format";
+import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { DISCLAIMER_AFFILIATE, DISCLAIMER_PLUMBING } from "@/lib/constants";
 import type { Detection, RecommendedFilter, Violation } from "@/lib/types";
 
@@ -571,6 +572,7 @@ export default async function PwsPage(props: { params: Promise<{ pwsid: string }
               lede="Each filter below holds independent NSF/ANSI health certification for every contaminant this system reported above its health goal. Products are surfaced by certification match, not commercial arrangement."
             />
 
+            {recommendations.some((filter) => filter.affiliate_url) && <AffiliateDisclosure />}
             <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {recommendations.map((r) => (
                 <RecommendationCard key={r.id} r={r} />

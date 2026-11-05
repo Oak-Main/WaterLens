@@ -1,3 +1,4 @@
+import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Badge, Button } from "@/components/ui";
 import { DISCLAIMER_AFFILIATE } from "@/lib/constants";
 import { contaminantName } from "@/lib/data";
@@ -198,6 +199,7 @@ export function FilterCarousel({
         dwelling, never commercial arrangement.
       </p>
 
+      {filters.some((filter) => filter.affiliate_url) && <AffiliateDisclosure />}
       <div
         className={`mt-6 grid grid-flow-col auto-cols-[19rem] grid-rows-1 gap-4 overflow-x-auto scroll-px-5 pb-2 snap-x sm:grid-flow-row sm:auto-cols-auto sm:overflow-visible ${cols}`}
       >
