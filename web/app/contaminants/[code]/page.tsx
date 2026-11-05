@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import {
   Badge,
   Button,
@@ -668,7 +669,7 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
               id="hardware-heading"
             />
 
-            <p className="affiliate-disclosure" role="note" data-linkguard="insert-disclosure">{/* [[COPY: one-sentence affiliate disclosure, max 140 chars]] */} [[COPY: one-sentence affiliate disclosure, max 140 chars]]</p>
+            {verified.some(({ filter }) => filter.affiliate_url) && <AffiliateDisclosure />}
             {verified.length > 0 ? (
               <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {verified.map(({ filter, standards, certifiers }) => (
