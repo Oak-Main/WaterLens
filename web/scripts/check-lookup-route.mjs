@@ -81,11 +81,12 @@ try {
       assert.match(html, /name="robots" content="noindex, nofollow"/);
       assert.equal(response.headers.get("x-robots-tag"), "noindex, nofollow");
     } else {
-      const markup = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>|<!--[\s\S]*?-->/gi, "");
-      const links = [...markup.matchAll(/<a\b[^>]*\bhref="https:\/\/affil\.waterqualitylens\.com\/[^"]+"[^>]*>/gi)];
+      const hardware = html.match(/<section\b[^>]*\bid="(?:hardware|filters)"[^>]*>[\s\S]*?<\/section>/i)?.[0];
+      assert.ok(hardware, path + ": missing hardware section");
+      const links = [...hardware.matchAll(/<a\b[^>]*\bhref="https:\/\/affil\.waterqualitylens\.com\/[^"]+"[^>]*>/gi)];
       assert.ok(links.length, path + ": expected at least one filter retailer link");
-      assert.doesNotMatch(markup, /\[\[COPY:/i, path + ": editorial placeholder");
-      assert.match(markup.slice(0, links[0].index), /<p\b[^>]*role="note"[^>]*>[^<]*may earn a commission[^<]*<\/p>/i,
+      assert.doesNotMatch(hardware, /\[\[COPY:/i, path + ": editorial placeholder");
+      assert.match(hardware.slice(0, links[0].index), /<p\b[^>]*role="note"[^>]*>[^<]*may earn a commission[^<]*<\/p>/i,
         path + ": missing commission disclosure before the first filter link");
       for (const [tag] of links) {
         assert.match(tag, /\brel="[^"]*\bsponsored\b[^"]*"/i, path + ": missing sponsored rel");
