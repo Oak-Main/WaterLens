@@ -668,6 +668,7 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
               id="hardware-heading"
             />
 
+            <p className="affiliate-disclosure" role="note" data-linkguard="insert-disclosure">{/* [[COPY: one-sentence affiliate disclosure, max 140 chars]] */} [[COPY: one-sentence affiliate disclosure, max 140 chars]]</p>
             {verified.length > 0 ? (
               <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {verified.map(({ filter, standards, certifiers }) => (
