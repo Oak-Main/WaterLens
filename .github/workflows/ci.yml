@@ -50,4 +50,6 @@ jobs:
         run: npm run test:sitemap
       - name: Smoke-test production web app
         working-directory: web
+        env:
+          CHROME_BIN: google-chrome
         run: npm run test:lookup-route
