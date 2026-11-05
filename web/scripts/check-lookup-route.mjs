@@ -12,7 +12,8 @@ await once(reservation, "listening");
 const port = reservation.address().port;
 await new Promise((resolve) => reservation.close(resolve));
 const origin = `http://127.0.0.1:${port}`;
-const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "-H", "127.0.0.1", "-p", String(port)], {
+const offlineFetch = new URL("./fixtures/offline-fetch.mjs", import.meta.url);
+const server = spawn(process.execPath, ["--import", offlineFetch.href, "node_modules/next/dist/bin/next", "start", "-H", "127.0.0.1", "-p", String(port)], {
   cwd: webRoot,
   env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
   stdio: ["ignore", "pipe", "pipe"],
@@ -64,18 +65,21 @@ try {
   assert.equal(missing.status, 404, "Unrelated unknown paths must remain 404");
   console.log("PASS unrelated unknown route remains 404");
 
-  // Cover the pages migrated to async params/searchParams in Next 15. These
-  // bundled reference pages and a deliberately too-short QA input need no API.
+  // Cover both the empty report and a report with recommendations from the
+  // bundled Flint system. The latter renders the address-report filter carousel.
+  const shortReport = "/results?address=QA&dwelling_type=MULTI_FAMILY_RENTAL";
+  const flintReport = "/results?" + new URLSearchParams({ address: "Flint, MI 48503" });
   for (const [path, title] of [
     ["/contaminants/PB90", /<title>[^<]*Lead/i],
     ["/pws/MI0002360", /<title>[^<]*Flint/i],
-    ["/results?address=QA&dwelling_type=MULTI_FAMILY_RENTAL", /<title>[^<]*Water report for QA/],
+    [shortReport, /<title>[^<]*Water report for QA/],
+    [flintReport, /<title>[^<]*Water report for Flint/],
   ]) {
     const response = await fetch(`${origin}${path}`, { signal: AbortSignal.timeout(10000) });
     assert.equal(response.status, 200, `${path}: migrated page should load`);
     const html = await response.text();
     assert.match(html, title, `${path}: async parameters should reach metadata`);
-    if (path.startsWith("/results")) {
+    if (path === shortReport) {
       assert.match(html, /Enter an address to see its water report/);
       assert.match(html, /value="QA"/);
       assert.match(html, /name="robots" content="noindex, nofollow"/);
