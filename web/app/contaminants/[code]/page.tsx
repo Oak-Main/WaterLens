@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { offerFor } from "@/lib/offers";
 import {
   Badge,
   Button,
@@ -669,10 +670,14 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
               id="hardware-heading"
             />
 
-            {verified.some(({ filter }) => filter.affiliate_url) && <AffiliateDisclosure />}
+            {verified.some(({ filter }) => offerFor(filter)) && (
+              <AffiliateDisclosure paid={verified.some(({ filter }) => offerFor(filter)?.paid)} />
+            )}
             {verified.length > 0 ? (
               <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {verified.map(({ filter, standards, certifiers }) => (
+                {verified.map(({ filter, standards, certifiers }) => {
+                  const offer = offerFor(filter);
+                  return (
                   <Card as="li" key={filter.id} className="flex flex-col p-6">
                     <div className="flex items-start justify-between gap-3">
                       <div>
@@ -683,7 +688,7 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
                           {filter.model}
                         </h3>
                       </div>
-                      <Badge tone="verdant">Verified Partner</Badge>
+                      <Badge tone="verdant">Certification verified</Badge>
                     </div>
 
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -707,21 +712,23 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
                       Certified by {certifiers.join(", ")}
                     </p>
 
-                    {filter.affiliate_url ? (
+                    {offer ? (
                       <div className="mt-5 pt-1">
                         <Button
-                          href={filter.affiliate_url}
+                          href={offer.href}
                           external
+                          rel={offer.rel}
                           variant="secondary"
                           fullWidth
-                          aria-label={`View the ${filter.brand} ${filter.model} at the retailer (opens in a new tab)`}
+                          aria-label={`View the ${filter.brand} ${filter.model} on ${filter.brand}'s site (opens in a new tab)`}
                         >
-                          View at retailer
+                          View at {filter.brand}
                         </Button>
                       </div>
                     ) : null}
                   </Card>
-                ))}
+                  );
+                })}
               </ul>
             ) : (
               <Card className="mt-8 p-6">

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui";
+import { LAB_TEST_OFFER } from "@/lib/offers";
 
-const LAB_TEST_URL = "https://affil.waterqualitylens.com/tap-score";
+const LAB_TEST = LAB_TEST_OFFER;
 
 function CheckIcon() {
   return (
@@ -113,7 +114,7 @@ export function EmptyState({
       ) : null}
 
       <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-        <Button href={LAB_TEST_URL} external aria-label="Order a Tap Score lab test (opens in a new tab)">
+        <Button href={LAB_TEST.href} rel={LAB_TEST.rel} external aria-label="Order a Tap Score lab test (opens in a new tab)">
           Order a Tap Score lab test
         </Button>
         {variant === "no-match" ? (

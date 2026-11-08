@@ -33,6 +33,7 @@ import {
   usd,
 } from "@/lib/format";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { offerFor } from "@/lib/offers";
 import { DISCLAIMER_AFFILIATE, DISCLAIMER_PLUMBING } from "@/lib/constants";
 import type { Detection, RecommendedFilter, Violation } from "@/lib/types";
 
@@ -262,6 +263,7 @@ function ViolationCard({ v }: { v: Violation }) {
 }
 
 function RecommendationCard({ r }: { r: RecommendedFilter }) {
+  const offer = offerFor(r);
   return (
     <Card as="li" className="flex flex-col p-6">
       <div className="flex items-start justify-between gap-3">
@@ -271,7 +273,7 @@ function RecommendationCard({ r }: { r: RecommendedFilter }) {
           </div>
           <h3 className="text-title-2">{r.model}</h3>
         </div>
-        <Badge tone="verdant">Verified Partner</Badge>
+        <Badge tone="verdant">Certification verified</Badge>
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -305,16 +307,17 @@ function RecommendationCard({ r }: { r: RecommendedFilter }) {
         </div>
       </div>
 
-      {r.affiliate_url ? (
+      {offer ? (
         <div className="mt-5 pt-1">
           <Button
-            href={r.affiliate_url}
+            href={offer.href}
             external
+            rel={offer.rel}
             variant="secondary"
             fullWidth
-            aria-label={`View ${r.brand} ${r.model} at retailer (opens in a new tab)`}
+            aria-label={`View the ${r.brand} ${r.model} on ${r.brand}'s site (opens in a new tab)`}
           >
-            View at retailer
+            View at {r.brand}
           </Button>
         </div>
       ) : null}
@@ -572,7 +575,9 @@ export default async function PwsPage(props: { params: Promise<{ pwsid: string }
               lede="Each filter below holds independent NSF/ANSI health certification for every contaminant this system reported above its health goal. Products are surfaced by certification match, not commercial arrangement."
             />
 
-            {recommendations.some((filter) => filter.affiliate_url) && <AffiliateDisclosure />}
+            {recommendations.some((filter) => offerFor(filter)) && (
+              <AffiliateDisclosure paid={recommendations.some((filter) => offerFor(filter)?.paid)} />
+            )}
             <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {recommendations.map((r) => (
                 <RecommendationCard key={r.id} r={r} />

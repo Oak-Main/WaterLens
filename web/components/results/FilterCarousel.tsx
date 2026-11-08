@@ -1,6 +1,7 @@
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Badge, Button } from "@/components/ui";
 import { DISCLAIMER_AFFILIATE } from "@/lib/constants";
+import { offerFor } from "@/lib/offers";
 import { contaminantName } from "@/lib/data";
 import { FORM_FACTOR_LABEL, standardLabel, usd } from "@/lib/format";
 import type { DwellingType, FormFactor, RecommendedFilter } from "@/lib/types";
@@ -18,7 +19,7 @@ function VerifiedPartnerBadge() {
         />
         <path d="m9 12 2 2 4-4.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-      Verified Partner
+      Certification verified
     </span>
   );
 }
@@ -60,6 +61,7 @@ function FilterCard({
 }) {
   const standards = [...filter.certified_standards];
   const rationale = top ? fitRationale(filter.form_factor, dwelling) : null;
+  const offer = offerFor(filter);
 
   return (
     <article
@@ -137,15 +139,16 @@ function FilterCard({
       ) : null}
 
       <div className="mt-auto pt-5">
-        {filter.affiliate_url ? (
+        {offer ? (
           <Button
-            href={filter.affiliate_url}
+            href={offer.href}
             external
+            rel={offer.rel}
             fullWidth
             size="sm"
-            aria-label={`View ${filter.brand} ${filter.model} at the retailer (opens in a new tab)`}
+            aria-label={`View the ${filter.brand} ${filter.model} on ${filter.brand}'s site (opens in a new tab)`}
           >
-            View verified product
+            View at {filter.brand}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -164,6 +167,7 @@ export function FilterCarousel({
   dwelling?: DwellingType;
 }) {
   if (filters.length === 0) return null;
+  const offers = filters.map(offerFor);
 
   // Two results in a 3-column grid left a dead column; size the grid to the
   // actual count so the commercial block never looks unfinished.
@@ -199,7 +203,7 @@ export function FilterCarousel({
         dwelling, never commercial arrangement.
       </p>
 
-      {filters.some((filter) => filter.affiliate_url) && <AffiliateDisclosure />}
+      {offers.some(Boolean) && <AffiliateDisclosure paid={offers.some((offer) => offer?.paid)} />}
       <div
         className={`mt-6 grid grid-flow-col auto-cols-[19rem] grid-rows-1 gap-4 overflow-x-auto scroll-px-5 pb-2 snap-x sm:grid-flow-row sm:auto-cols-auto sm:overflow-visible ${cols}`}
       >

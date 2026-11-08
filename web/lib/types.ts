@@ -90,6 +90,8 @@ export interface Filter {
   price_usd: number | null;
   capacity_gallons: number | null;
   affiliate_url: string | null;
+  /** Manufacturer page, linked unpaid when no verified paid destination exists. */
+  maker_url: string | null;
   active: number;
 }
 
@@ -110,6 +112,7 @@ export interface RecommendedFilter {
   price_usd: number | null;
   capacity_gallons: number | null;
   affiliate_url: string | null;
+  maker_url: string | null;
   certified_standards: NsfStandard[];
   neutralizes: string[];
   full_coverage: boolean;

@@ -296,8 +296,10 @@ export function Stat({
 type ButtonProps = {
   children: ReactNode;
   href?: string;
-  /** Renders an <a target="_blank"> with sponsored/noopener rel. */
+  /** Renders an <a target="_blank">. */
   external?: boolean;
+  /** rel for external links; defaults to unpaid "noopener noreferrer". Pass the offer's rel. */
+  rel?: string;
   type?: "button" | "submit";
   variant?: "primary" | "secondary" | "ghost" | "inverse";
   size?: "sm" | "md" | "lg";
@@ -333,6 +335,7 @@ export function Button({
   className,
   disabled,
   fullWidth,
+  rel = "noopener noreferrer",
   ...rest
 }: ButtonProps) {
   const cls = cx(
@@ -352,7 +355,7 @@ export function Button({
         <a
           href={href}
           target="_blank"
-          rel="sponsored noopener noreferrer"
+          rel={rel}
           className={cls}
           {...rest}
         >

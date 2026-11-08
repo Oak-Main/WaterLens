@@ -79,18 +79,21 @@ export const CERTIFICATIONS: Record<NsfStandard, { description: string; is_healt
   "P473": { description: "Retired 2022 PFOA/PFOS standard; absorbed into NSF/ANSI 53 and 58.", is_health: false, is_obsolete: true },
 };
 
+// affiliate_url stays null: no program is approved and the former redirect host does not
+// resolve. maker_url is the manufacturer's own product page where one was verified (HTTP 200,
+// same model, 2026-11-08), otherwise the manufacturer's home page. See lib/offers.ts.
 export const FILTERS: Filter[] = [
-  { id: 1, brand: "ZeroWater", model: "5-Stage Ready-Pour Pitcher", sku: "ZW-ZD010RP", form_factor: "PITCHER", price_usd: 39.99, capacity_gallons: 25, affiliate_url: "https://affil.waterqualitylens.com/zerowater-zd010rp", active: 1 },
-  { id: 2, brand: "Frizzlife", model: "M800 Under-Sink Reverse Osmosis", sku: "FZ-M800", form_factor: "UNDERSINK_RO", price_usd: 399, capacity_gallons: 1100, affiliate_url: "https://affil.waterqualitylens.com/frizzlife-m800", active: 1 },
-  { id: 3, brand: "AquaTru", model: "Classic Countertop RO", sku: "AT-CLASSIC", form_factor: "COUNTERTOP_RO", price_usd: 449, capacity_gallons: 600, affiliate_url: "https://affil.waterqualitylens.com/aquatru-classic", active: 1 },
-  { id: 4, brand: "Clearly Filtered", model: "Affinity Filtered Water Pitcher", sku: "CF-AFFINITY", form_factor: "PITCHER", price_usd: 90, capacity_gallons: 100, affiliate_url: "https://affil.waterqualitylens.com/clearlyfiltered", active: 1 },
-  { id: 5, brand: "Brita", model: "Standard Everyday Pitcher (OB03)", sku: "BR-OB03", form_factor: "PITCHER", price_usd: 29.99, capacity_gallons: 40, affiliate_url: "https://affil.waterqualitylens.com/brita-standard", active: 1 },
-  { id: 6, brand: "Brita", model: "Elite Pitcher (OB06)", sku: "BR-OB06", form_factor: "PITCHER", price_usd: 39.99, capacity_gallons: 120, affiliate_url: "https://affil.waterqualitylens.com/brita-elite", active: 1 },
-  { id: 7, brand: "Pureline", model: "Universal Replacement Cartridge", sku: "PL-UNIV01", form_factor: "REFRIGERATOR", price_usd: 19.99, capacity_gallons: 200, affiliate_url: "https://affil.waterqualitylens.com/pureline-univ", active: 1 },
-  { id: 8, brand: "Waterdrop", model: "G3P800 Under-Sink RO", sku: "WD-G3P800", form_factor: "UNDERSINK_RO", price_usd: 549, capacity_gallons: 1000, affiliate_url: "https://affil.waterqualitylens.com/waterdrop-g3p800", active: 1 },
-  { id: 9, brand: "LifeStraw", model: "Home Water Filter Pitcher", sku: "LS-HOME7", form_factor: "PITCHER", price_usd: 59.99, capacity_gallons: 40, affiliate_url: "https://affil.waterqualitylens.com/lifestraw-home", active: 1 },
-  { id: 10, brand: "Epic Water", model: "Pure Filter Pitcher", sku: "EP-PURE10", form_factor: "PITCHER", price_usd: 69.95, capacity_gallons: 150, affiliate_url: "https://affil.waterqualitylens.com/epic-pure", active: 1 },
-  { id: 11, brand: "SpringWell", model: "CF1 Whole House Filter", sku: "SW-CF1", form_factor: "WHOLE_HOUSE", price_usd: 1000, capacity_gallons: 1000000, affiliate_url: "https://affil.waterqualitylens.com/springwell-cf1", active: 1 },
+  { id: 1, brand: "ZeroWater", model: "5-Stage Ready-Pour Pitcher", sku: "ZW-ZD010RP", form_factor: "PITCHER", price_usd: 39.99, capacity_gallons: 25, affiliate_url: null, maker_url: "https://zerowater.com/", active: 1 },
+  { id: 2, brand: "Frizzlife", model: "M800 Under-Sink Reverse Osmosis", sku: "FZ-M800", form_factor: "UNDERSINK_RO", price_usd: 399, capacity_gallons: 1100, affiliate_url: null, maker_url: "https://www.frizzlife.com/products/m800", active: 1 },
+  { id: 3, brand: "AquaTru", model: "Classic Countertop RO", sku: "AT-CLASSIC", form_factor: "COUNTERTOP_RO", price_usd: 449, capacity_gallons: 600, affiliate_url: null, maker_url: "https://aquatru.com/products/countertop-reverse-osmosis-water-purifier", active: 1 },
+  { id: 4, brand: "Clearly Filtered", model: "Affinity Filtered Water Pitcher", sku: "CF-AFFINITY", form_factor: "PITCHER", price_usd: 90, capacity_gallons: 100, affiliate_url: null, maker_url: "https://clearlyfiltered.com/", active: 1 },
+  { id: 5, brand: "Brita", model: "Standard Everyday Pitcher (OB03)", sku: "BR-OB03", form_factor: "PITCHER", price_usd: 29.99, capacity_gallons: 40, affiliate_url: null, maker_url: "https://www.brita.com/", active: 1 },
+  { id: 6, brand: "Brita", model: "Elite Pitcher (OB06)", sku: "BR-OB06", form_factor: "PITCHER", price_usd: 39.99, capacity_gallons: 120, affiliate_url: null, maker_url: "https://www.brita.com/", active: 1 },
+  { id: 7, brand: "Pureline", model: "Universal Replacement Cartridge", sku: "PL-UNIV01", form_factor: "REFRIGERATOR", price_usd: 19.99, capacity_gallons: 200, affiliate_url: null, maker_url: "https://purelinefilters.com/", active: 1 },
+  { id: 8, brand: "Waterdrop", model: "G3P800 Under-Sink RO", sku: "WD-G3P800", form_factor: "UNDERSINK_RO", price_usd: 549, capacity_gallons: 1000, affiliate_url: null, maker_url: "https://www.waterdropfilter.com/", active: 1 },
+  { id: 9, brand: "LifeStraw", model: "Home Water Filter Pitcher", sku: "LS-HOME7", form_factor: "PITCHER", price_usd: 59.99, capacity_gallons: 40, affiliate_url: null, maker_url: "https://lifestraw.com/", active: 1 },
+  { id: 10, brand: "Epic Water", model: "Pure Filter Pitcher", sku: "EP-PURE10", form_factor: "PITCHER", price_usd: 69.95, capacity_gallons: 150, affiliate_url: null, maker_url: "https://www.epicwaterfilters.com/", active: 1 },
+  { id: 11, brand: "SpringWell", model: "CF1 Whole House Filter", sku: "SW-CF1", form_factor: "WHOLE_HOUSE", price_usd: 1000, capacity_gallons: 1000000, affiliate_url: null, maker_url: "https://www.springwellwater.com/", active: 1 },
 ];
 
 const c = (filter_id: number, standard: NsfStandard, contaminant_code: string, certifier = "NSF"): FilterClaim =>
