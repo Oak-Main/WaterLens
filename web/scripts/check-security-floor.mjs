@@ -5,12 +5,15 @@
  *   GHSA-2464-fhr4-w9xw  Image Optimization API SVG RCE (glibc Linux)
  *   GHSA-p3m5-59mp-jv5r  App Router Server Actions DoS
  *   GHSA-673q-mjm6-r5xr  `use cache` typed-array RCE (16.x only)
+ *   Next.js November 2026 release (2026-11-03): GHSA-mfr8-8qww-v76h, GHSA-vc7v-qv4w-wrv8,
+ *   GHSA-rhh4-g77r-r9qj, GHSA-pc58-hwjq-p385, GHSA-f3mh-rxg3-f5g2, GHSA-7qx7-33qx-rqx2
+ *   and the self-hosted shell-cache issue; fixed in 15.5.29 and 16.4.5
  *
  * It reads what is actually installed in node_modules (not package.json), and
  * resolves sharp from next's own location, i.e. the copy next will load.
  *
- *   next 15.x  >= 15.5.28
- *   next 16.x  >= 16.4.1
+ *   next 15.x  >= 15.5.29
+ *   next 16.x  >= 16.4.5
  *   sharp      >= 0.35.5
  *
  * Usage: npm run check:security-floor   (exit 1 on any violation)
@@ -21,7 +24,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const NEXT_FLOORS = { 15: [15, 5, 28], 16: [16, 4, 1] };
+const NEXT_FLOORS = { 15: [15, 5, 29], 16: [16, 4, 5] };
 const SHARP_FLOOR = [0, 35, 5];
 
 const fmt = (v) => v.join(".");
@@ -76,7 +79,7 @@ if (nextMajor < 15) {
 } else if (NEXT_FLOORS[nextMajor]) {
   const floor = NEXT_FLOORS[nextMajor];
   if (isBelow(nextVersion, floor)) {
-    problems.push(`next ${nextVersion} is below the fixed floor for ${nextMajor}.x (${fmt(floor)}): GHSA-2464-fhr4-w9xw, GHSA-p3m5-59mp-jv5r${nextMajor === 16 ? ", GHSA-673q-mjm6-r5xr" : ""}`);
+    problems.push(`next ${nextVersion} is below the fixed floor for ${nextMajor}.x (${fmt(floor)}): GHSA-2464-fhr4-w9xw, GHSA-p3m5-59mp-jv5r${nextMajor === 16 ? ", GHSA-673q-mjm6-r5xr" : ""} and the 2026-11-03 Next.js security release`);
   }
 }
 
