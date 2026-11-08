@@ -7,6 +7,7 @@ import {
 } from "../types";
 import {
   DISCLAIMER_AFFILIATE,
+  DISCLAIMER_UNPAID_LINKS,
   DISCLAIMER_MEDICAL,
   DISCLAIMER_PLUMBING,
   DISCLAIMER_TIER3,
@@ -36,8 +37,10 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
-function buildDisclaimers(tier: MatchTier): string[] {
-  const out = [DISCLAIMER_MEDICAL, DISCLAIMER_PLUMBING, DISCLAIMER_AFFILIATE];
+// The affiliate disclaimer is stated only when a recommended filter actually carries a paid link.
+export function buildDisclaimers(tier: MatchTier, filters: { affiliate_url: string | null }[] = []): string[] {
+  const paid = filters.some((f) => Boolean(f.affiliate_url));
+  const out = [DISCLAIMER_MEDICAL, DISCLAIMER_PLUMBING, paid ? DISCLAIMER_AFFILIATE : DISCLAIMER_UNPAID_LINKS];
   if (tier === MatchTier.MODELED || tier === MatchTier.NONE) {
     out.splice(1, 0, DISCLAIMER_TIER3);
   }
@@ -118,7 +121,7 @@ async function buildReport(
       sdwis_fetched_at: profile.fetched_at,
       generated_at: nowIso(),
     },
-    disclaimers: buildDisclaimers(match.tier),
+    disclaimers: buildDisclaimers(match.tier, recommended),
     meta: { cache_hit: false, engine_version: ENGINE_VERSION, resolution },
   };
 }

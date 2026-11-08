@@ -56,10 +56,16 @@ export const DISCLAIMER_PLUMBING =
   "contamination such as legacy household lead service lines. A point-of-use lab test is the only " +
   "way to verify contamination introduced by your home's plumbing.";
 
+/** Used only when at least one recommended filter carries a paid (affiliate) link. */
 export const DISCLAIMER_AFFILIATE =
-  "Recommended hardware links are affiliate placements. Products are surfaced solely because they " +
+  "Some recommended hardware links are affiliate placements. Products are surfaced solely because they " +
   "hold independently verified NSF/ANSI health certifications for the detected contaminants; " +
   "commercial rankings never override objective scientific data.";
+
+/** Used when no recommended filter carries a paid link (the default: affiliate_url is null). */
+export const DISCLAIMER_UNPAID_LINKS =
+  "Recommended hardware links carry no affiliate tracking. Products are surfaced solely because they " +
+  "hold independently verified NSF/ANSI health certifications for the detected contaminants.";
 
 // -----------------------------------------------------------------------------
 // SDWIS / Envirofacts — SDWA table names (§10, §22).
