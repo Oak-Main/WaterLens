@@ -183,8 +183,8 @@ export default function RegistryPage() {
           <p className="mt-6 max-w-3xl text-xs leading-relaxed text-ink-500 dark:text-ink-400">
             Certification data reflects manufacturer listings verified against the
             NSF, WQA, and IAPMO public certification databases. A filter&rsquo;s
-            presence in this registry is not an endorsement; inclusion of affiliate
-            links never affects how a product is described or ordered.
+            presence in this registry is not an endorsement, and outbound product
+            links never affect how a product is described or ordered.
           </p>
         </Container>
       </Section>
