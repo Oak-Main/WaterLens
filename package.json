@@ -4,6 +4,9 @@
   "private": true,
   "description": "Deterministic address-to-Public-Water-System (PWS) lookup and NSF/ANSI-verified filtration matching engine. Cloudflare-native backend.",
   "type": "module",
+  "engines": {
+    "node": "^22.13.0 || ^24.0.0 || >=26.0.0"
+  },
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
