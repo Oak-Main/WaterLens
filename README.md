@@ -132,6 +132,11 @@ unit** per contaminant so exceedance math is apples-to-apples.
 
 ## Getting started
 
+The backend toolchain needs **Node.js 22.13+ (22.x), 24.x or 26+**, as declared in
+the root `package.json` `engines`: Vitest 5 requires `^22.12 || ^24 || >=26`,
+Wrangler 4 requires `>=22`, and the migration test uses `node:sqlite`, which needs
+no flag from 22.13. CI and Vercel use Node 24.
+
 ```bash
 npm install
 
