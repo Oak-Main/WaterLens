@@ -3,8 +3,8 @@ import m0001 from "../migrations/0001_schema.sql?raw";
 import m0002 from "../migrations/0002_reference_data.sql?raw";
 import m0003 from "../migrations/0003_enrichment.sql?raw";
 import m0004 from "../migrations/0004_unresolved_affiliate_urls.sql?raw";
-import { buildDisclaimers } from "../src/services/lookup";
-import { DISCLAIMER_AFFILIATE, DISCLAIMER_UNPAID_LINKS } from "../src/config/constants";
+import { buildDisclaimers, isPaidAffiliateUrl } from "../src/services/lookup";
+import { DISCLAIMER_AFFILIATE, DISCLAIMER_UNPAID_LINKS, PAID_OFFER_HOSTS } from "../src/config/constants";
 import { MatchTier } from "../src/types";
 
 describe("affiliate disclaimer follows the links that ship", () => {
@@ -16,10 +16,25 @@ describe("affiliate disclaimer follows the links that ship", () => {
   it("states the unpaid wording when there are no recommendations at all", () => {
     expect(buildDisclaimers(MatchTier.NONE)).toContain(DISCLAIMER_UNPAID_LINKS);
   });
-  it("states the affiliate wording only when a recommended filter carries a paid link", () => {
+  it("keeps the unpaid wording for an affiliate_url whose host is not in PAID_OFFER_HOSTS", () => {
+    expect(PAID_OFFER_HOSTS).toEqual([]);
     const out = buildDisclaimers(MatchTier.EXPLICIT, [{ affiliate_url: null }, { affiliate_url: "https://partner.example/x" }]);
+    expect(out).toContain(DISCLAIMER_UNPAID_LINKS);
+    expect(out).not.toContain(DISCLAIMER_AFFILIATE);
+  });
+  it("states the affiliate wording only when a recommended filter's host is listed as paid", () => {
+    const hosts = ["partner.example"];
+    const out = buildDisclaimers(MatchTier.EXPLICIT, [{ affiliate_url: null }, { affiliate_url: "https://partner.example/x" }], hosts);
     expect(out).toContain(DISCLAIMER_AFFILIATE);
     expect(out).not.toContain(DISCLAIMER_UNPAID_LINKS);
+  });
+  it("applies the same host rule as web/lib/offers.ts", () => {
+    const hosts = ["partner.example"];
+    expect(isPaidAffiliateUrl("https://PARTNER.example/x", hosts)).toBe(true);
+    expect(isPaidAffiliateUrl("http://partner.example/x", hosts)).toBe(false);
+    expect(isPaidAffiliateUrl("https://partner.example.evil.test/x", hosts)).toBe(false);
+    expect(isPaidAffiliateUrl("not a url", hosts)).toBe(false);
+    expect(isPaidAffiliateUrl(null, hosts)).toBe(false);
   });
 });
 

@@ -14,6 +14,7 @@ import {
   ENGINE_VERSION,
   NITRATE_CODES,
   NITRATE_WARNING,
+  PAID_OFFER_HOSTS,
 } from "../config/constants";
 import { cacheKeys, getJson, putJson, ttl } from "../lib/cache";
 import { geocode } from "../lib/geocode";
@@ -37,9 +38,27 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
+/** True only for an https URL whose hostname is listed in `paidHosts` (same rule as web/lib/offers.ts). */
+export function isPaidAffiliateUrl(url: string | null, paidHosts: readonly string[] = PAID_OFFER_HOSTS): boolean {
+  if (!url) return false;
+  let host: string;
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:") return false;
+    host = u.hostname.toLowerCase();
+  } catch {
+    return false;
+  }
+  return paidHosts.some((listed) => listed.toLowerCase() === host);
+}
+
 // The affiliate disclaimer is stated only when a recommended filter actually carries a paid link.
-export function buildDisclaimers(tier: MatchTier, filters: { affiliate_url: string | null }[] = []): string[] {
-  const paid = filters.some((f) => Boolean(f.affiliate_url));
+export function buildDisclaimers(
+  tier: MatchTier,
+  filters: { affiliate_url: string | null }[] = [],
+  paidHosts: readonly string[] = PAID_OFFER_HOSTS
+): string[] {
+  const paid = filters.some((f) => isPaidAffiliateUrl(f.affiliate_url, paidHosts));
   const out = [DISCLAIMER_MEDICAL, DISCLAIMER_PLUMBING, paid ? DISCLAIMER_AFFILIATE : DISCLAIMER_UNPAID_LINKS];
   if (tier === MatchTier.MODELED || tier === MatchTier.NONE) {
     out.splice(1, 0, DISCLAIMER_TIER3);
