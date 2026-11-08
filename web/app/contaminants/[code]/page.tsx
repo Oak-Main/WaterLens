@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { offerAriaLabel, offerFor, offerLinkText } from "@/lib/offers";
 import {
   Badge,
   Button,
@@ -306,6 +307,7 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
 
   const unit = unitLabel(c);
   const verified = verifiedFiltersFor(c.code);
+  const hardwarePaid = verified.some(({ filter }) => offerFor(filter)?.paid);
   const isNitrate = NITRATE_CODES.has(c.code);
   const counts = claimCountsByStandard(c.code);
   const systems = systemsReporting(c.code);
@@ -650,12 +652,12 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
         </Section>
       ) : null}
 
-      {/* Hardware — commercial placements, kept below the objective record -- */}
+      {/* Hardware — kept below the objective record ---------------------- */}
       <Section id="hardware" tone="sunken">
         <Container>
           <div className="rounded-3xl border border-hairline bg-surface-base p-6 shadow-card sm:p-10">
             <SectionHeading
-              eyebrow="Certified reduction · commercial placements"
+              eyebrow={hardwarePaid ? "Certified reduction · commercial placements" : "Certified reduction · manufacturer links"}
               title={`Filters verified to reduce ${c.name}`}
               lede={
                 <>
@@ -669,10 +671,14 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
               id="hardware-heading"
             />
 
-            {verified.some(({ filter }) => filter.affiliate_url) && <AffiliateDisclosure />}
+            {verified.some(({ filter }) => offerFor(filter)) && (
+              <AffiliateDisclosure paid={hardwarePaid} />
+            )}
             {verified.length > 0 ? (
               <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {verified.map(({ filter, standards, certifiers }) => (
+                {verified.map(({ filter, standards, certifiers }) => {
+                  const offer = offerFor(filter);
+                  return (
                   <Card as="li" key={filter.id} className="flex flex-col p-6">
                     <div className="flex items-start justify-between gap-3">
                       <div>
@@ -683,7 +689,7 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
                           {filter.model}
                         </h3>
                       </div>
-                      <Badge tone="verdant">Verified Partner</Badge>
+                      <Badge tone="verdant">Certification verified</Badge>
                     </div>
 
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -707,21 +713,23 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
                       Certified by {certifiers.join(", ")}
                     </p>
 
-                    {filter.affiliate_url ? (
+                    {offer ? (
                       <div className="mt-5 pt-1">
                         <Button
-                          href={filter.affiliate_url}
+                          href={offer.href}
                           external
+                          rel={offer.rel}
                           variant="secondary"
                           fullWidth
-                          aria-label={`View the ${filter.brand} ${filter.model} at the retailer (opens in a new tab)`}
+                          aria-label={offerAriaLabel(offer, filter.brand, filter.model)}
                         >
-                          View at retailer
+                          {offerLinkText(offer, filter.brand)}
                         </Button>
                       </div>
                     ) : null}
                   </Card>
-                ))}
+                  );
+                })}
               </ul>
             ) : (
               <Card className="mt-8 p-6">
@@ -741,10 +749,12 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
             )}
 
             <p className="mt-8 max-w-3xl text-xs leading-relaxed text-ink-500 dark:text-ink-400">
-              Hardware links are affiliate placements marked &ldquo;Verified
-              Partner.&rdquo; Products appear here solely because they hold an
-              independently verified NSF/ANSI health certification for {c.name};
-              commercial arrangements never affect this list.
+              {hardwarePaid
+                ? "Some hardware links are affiliate placements, disclosed before the links. "
+                : "Hardware links go directly to the manufacturers, with no affiliate tracking. "}
+              Products appear here solely because they hold an independently
+              verified NSF/ANSI health certification for {c.name}; commercial
+              arrangements never affect this list.
             </p>
           </div>
         </Container>

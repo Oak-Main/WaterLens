@@ -1,5 +1,7 @@
 // Policy constants shared across the web app — mirrors the backend (§12–§14).
 
+import { PAID_OFFERS_ENABLED } from "./offers";
+
 export const ENGINE_VERSION = "1.0.0";
 
 export enum MatchTier {
@@ -48,10 +50,13 @@ export const DISCLAIMER_PLUMBING =
   "contamination such as legacy household lead service lines. A point-of-use lab test is the only " +
   "way to verify contamination introduced by your home's plumbing.";
 
-export const DISCLAIMER_AFFILIATE =
-  "Recommended hardware links are affiliate placements. Products are surfaced solely because they " +
-  "hold independently verified NSF/ANSI health certifications for the detected contaminants; " +
-  "commercial rankings never override objective scientific data.";
+export const DISCLAIMER_AFFILIATE = PAID_OFFERS_ENABLED
+  ? "Some recommended hardware links are affiliate placements. Products are surfaced solely because they " +
+    "hold independently verified NSF/ANSI health certifications for the detected contaminants; " +
+    "commercial rankings never override objective scientific data."
+  : "Recommended hardware links go directly to the manufacturers and the lab-test link to SimpleLab's Tap Score, " +
+    "with no affiliate tracking. Products are surfaced solely because they hold independently verified NSF/ANSI " +
+    "health certifications for the detected contaminants.";
 
 export const NITRATE_WARNING =
   "Nitrate/nitrite cannot be removed by standard carbon-based pitcher, faucet, or under-sink " +

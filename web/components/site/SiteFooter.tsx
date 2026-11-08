@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PAID_OFFERS_ENABLED } from "@/lib/offers";
 import { Button, Container } from "@/components/ui";
 import { Logo } from "./Logo";
 import { DISCLAIMER_MEDICAL } from "@/lib/constants";
@@ -76,8 +77,9 @@ export function SiteFooter() {
           <div className="mt-4 flex flex-col justify-between gap-2 text-sm leading-relaxed text-ink-600 sm:flex-row dark:text-ink-300">
             <span>© {new Date().getFullYear()} WaterQualityLens. All rights reserved.</span>
             <span className="max-w-xl">
-              Some hardware links are affiliate placements, clearly marked
-              “Verified Partner.” Commercial ranking never overrides data.
+              {PAID_OFFERS_ENABLED
+                ? "Some hardware links are affiliate placements, disclosed before the links. Commercial ranking never overrides data."
+                : "Hardware links go straight to the manufacturers and the lab-test link to SimpleLab, with no affiliate tracking. Commercial ranking never overrides data."}
             </span>
           </div>
         </div>

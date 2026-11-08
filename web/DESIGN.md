@@ -15,9 +15,13 @@ precision instrument, not a scare campaign.
   sample date, testing agency, unit, and the legal MCL. No naked numbers. This
   holds at every breakpoint — a wide table that amputates its provenance columns
   on mobile is a violation, not a tradeoff.
-- **Affiliate hardware is visually delineated** from objective data — distinct
-  bounding box + "Verified Partner" badge (FTC disclosure). Commercial ranking
-  never precedes scientific data.
+- **Product links are visually delineated** from objective data — distinct
+  bounding box, and the disclosure notice sits before the first link. The notice,
+  badge, `rel` and legal copy follow `PAID_OFFER_HOSTS` in `lib/offers.ts`: unpaid
+  links say they carry no affiliate tracking; a paid link gets the commission
+  notice and `rel="sponsored"`. "Certification verified" describes the NSF/ANSI
+  record, never a commercial relationship. Commercial ranking never precedes
+  scientific data.
 - **Persistent disclaimers**: the medical-claims disclaimer is always reachable;
   Tier-3 matches show the lab-test recommendation banner.
 - **No medical claims** anywhere in copy. We report engineering + certification

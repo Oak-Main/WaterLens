@@ -398,9 +398,8 @@ export default function MethodologyPage() {
                   <p>
                     The result is a short, defensible set of options in which the
                     recommendation follows the data. Commercial considerations
-                    never reorder scientific fit; a{" "}
-                    <strong>&ldquo;Verified Partner&rdquo;</strong> affiliate link
-                    earns its place only after it has qualified on the
+                    never reorder scientific fit; a product link, paid or not,
+                    earns its place only after the product has qualified on the
                     certification.
                   </p>
                 </Prose>

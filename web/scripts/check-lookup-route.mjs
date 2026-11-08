@@ -11,13 +11,23 @@ import { promisify } from "node:util";
 function checkFilterLinks(html, path) {
   const hardware = html.match(/<section\b[^>]*\bid="(?:hardware|filters)"[^>]*>[\s\S]*?<\/section>/i)?.[0];
   assert.ok(hardware, path + ": missing hardware section");
-  const links = [...hardware.matchAll(/<a\b[^>]*\bhref="https:\/\/affil\.waterqualitylens\.com\/[^"]+"[^>]*>/gi)];
-  assert.ok(links.length, path + ": expected filter retailer links");
+  // The former redirect host affil.waterqualitylens.com did not resolve in checks on 2026-11-08; no link
+  // anywhere on the page may use it (filter buttons and the Tap Score lab-test buttons alike).
+  assert.doesNotMatch(html, /affil\.waterqualitylens\.com/i, path + ": link to the redirect host that did not resolve (2026-11-08)");
   assert.doesNotMatch(hardware, /\[\[COPY:/i, path + ": editorial placeholder");
-  assert.match(hardware.slice(0, links[0].index), /<p\b[^>]*role="note"[^>]*>[^<]*may earn a commission[^<]*<\/p>/i,
-    path + ": missing commission disclosure before the first filter link");
+  const links = [...hardware.matchAll(/<a\b[^>]*\baria-label="View at [^"]*\(opens in a new tab\)"[^>]*>/gi)];
+  assert.ok(links.length, path + ": expected filter maker links");
+  // No paid destination is configured (lib/offers.ts), so the notice and every link say unpaid.
+  assert.match(hardware.slice(0, links[0].index), /<p\b[^>]*role="note"[^>]*>[^<]*earns no commission[^<]*<\/p>/i,
+    path + ": missing unpaid-link notice before the first filter link");
+  assert.doesNotMatch(hardware, /may earn a commission/i, path + ": commission wording with no paid destination");
+  assert.doesNotMatch(hardware, />\s*Affiliate\s*</, path + ": Affiliate badge on unpaid links");
+  assert.doesNotMatch(hardware, /Verified\s+Partner|affiliate placement|commercial placement/i, path + ": paid-placement wording on unpaid links");
   for (const [tag] of links) {
-    assert.match(tag, /\brel="[^"]*\bsponsored\b[^"]*"/i, path + ": missing sponsored rel");
+    assert.match(tag, /\bhref="https:\/\/[^"]+"/i, path + ": filter link must be https");
+    assert.doesNotMatch(tag, /\brel="[^"]*\bsponsored\b/i, path + ": unpaid link marked sponsored");
+    assert.match(tag, /\brel="[^"]*\bnoopener\b[^"]*"/i, path + ": missing noopener");
+    assert.match(tag, /\btarget="_blank"/i, path + ": filter link should open a new tab");
   }
 }
 

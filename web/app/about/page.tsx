@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PAID_OFFERS_ENABLED } from "@/lib/offers";
 import { Container, Section, SectionHeading, Card, Eyebrow, Badge } from "@/components/ui";
 import { Prose } from "@/components/institutional/Prose";
 import {
@@ -247,13 +248,9 @@ export default function AboutPage() {
                 />
                 <Prose className="mt-6">
                   <p>
-                    We fund the product through contextual affiliate hardware
-                    links and lab-test referrals — and we keep those revenues from
-                    ever touching the science. Affiliate placements are clearly
-                    marked <strong>&ldquo;Verified Partner&rdquo;</strong>, and a
-                    product can only appear after it has independently qualified
-                    on the relevant NSF/ANSI health certification for a detected
-                    contaminant. Commercial ranking never overrides the data.
+                    {PAID_OFFERS_ENABLED
+                      ? "Some hardware links are affiliate placements, and a notice appears before them. We keep that revenue from ever touching the science: a product can only appear after it has independently qualified on the relevant NSF/ANSI health certification for a detected contaminant. Commercial ranking never overrides the data."
+                      : "Hardware links go straight to the manufacturers today and the lab-test link to SimpleLab's Tap Score. None carries affiliate tracking, so we earn no commission from them. If that changes, a notice will appear before any paid link. Either way, a product can only appear after it has independently qualified on the relevant NSF/ANSI health certification for a detected contaminant, and commercial ranking never overrides the data."}
                   </p>
                   <p>
                     Display advertising is restricted, and it never appears

@@ -162,6 +162,7 @@ export function matchFilters(
       price_usd: f.price_usd,
       capacity_gallons: f.capacity_gallons,
       affiliate_url: f.affiliate_url,
+      maker_url: f.maker_url,
       certified_standards: [...cap.standards].sort(),
       neutralizes: hazardList.filter((h) => cap.codes.has(h)),
       full_coverage: true,

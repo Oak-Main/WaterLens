@@ -1,9 +1,10 @@
 import { Badge, Button } from "@/components/ui";
+import { LAB_TEST_OFFER } from "@/lib/offers";
 import { DISCLAIMER_TIER3, MatchTier } from "@/lib/constants";
 import { tierTone } from "@/lib/format";
 import type { SpatialMatch } from "@/lib/types";
 
-const LAB_TEST_URL = "https://affil.waterqualitylens.com/tap-score";
+const LAB_TEST = LAB_TEST_OFFER;
 
 type Tone = "verdant" | "brand" | "caution" | "ink";
 
@@ -115,7 +116,8 @@ export function ConfidenceBanner({
                 {DISCLAIMER_TIER3}
               </p>
               <Button
-                href={LAB_TEST_URL}
+                href={LAB_TEST.href}
+                rel={LAB_TEST.rel}
                 external
                 size="md"
                 className="mt-3"

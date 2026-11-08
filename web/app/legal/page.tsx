@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PAID_OFFERS_ENABLED } from "@/lib/offers";
 import { Container, Section, SectionHeading, Card, Eyebrow, Badge } from "@/components/ui";
 import { Prose } from "@/components/institutional/Prose";
 import {
@@ -87,10 +88,11 @@ const DISCLOSURES: Disclosure[] = [
     n: "04",
     heading: "FTC affiliate disclosure",
     tone: "verdant",
-    badge: "Verified Partner",
+    badge: PAID_OFFERS_ENABLED ? "Paid links disclosed" : "No paid links",
     text: DISCLAIMER_AFFILIATE,
-    context:
-      "Some hardware and lab-test links are affiliate placements, and we may earn a commission. Those links are clearly marked “Verified Partner,” and a product only appears after qualifying on the relevant NSF/ANSI health certification. Commercial ranking never reorders the science.",
+    context: PAID_OFFERS_ENABLED
+      ? "Some hardware links are affiliate placements, and we may earn a commission. A notice appears before those links, and a product only appears after qualifying on the relevant NSF/ANSI health certification. Commercial ranking never reorders the science."
+      : "None of the hardware or lab-test links on this site carries affiliate tracking. Hardware links go straight to the manufacturer and the lab-test link to SimpleLab's Tap Score, and a product only appears after qualifying on the relevant NSF/ANSI health certification. If that changes, a notice will appear before any paid link.",
   },
 ];
 
@@ -253,10 +255,9 @@ export default function LegalPage() {
                       is not sold.
                     </li>
                     <li>
-                      <strong>Affiliate links.</strong> When you follow a{" "}
-                      &ldquo;Verified Partner&rdquo; link, the destination
-                      retailer or lab operates under its own privacy practices,
-                      not ours.
+                      <strong>Outbound product links.</strong> When you follow a
+                      product or lab-test link, the destination site operates
+                      under its own privacy practices, not ours.
                     </li>
                   </ul>
                 </Prose>
