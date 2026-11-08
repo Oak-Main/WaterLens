@@ -2,6 +2,7 @@ import { Env } from "../types";
 import { error, json } from "../lib/http";
 import { getSdwisProfile } from "../services/sdwis";
 import { matchFilters } from "../services/setcover";
+import { publicAffiliateUrl } from "../lib/offers";
 
 // -----------------------------------------------------------------------------
 // Programmatic entity endpoints backing the SEO architecture (§9).
@@ -81,7 +82,8 @@ export async function handleContaminant(_req: Request, env: Env, params: Record<
         AND fc.contaminant_code = (SELECT code FROM contaminants WHERE code = ?1 OR upper(name) = ?1)`
   )
     .bind(code)
-    .all();
+    .all<Record<string, unknown> & { affiliate_url: string | null }>();
 
-  return json({ contaminant: def, verified_filters: filters ?? [] });
+  const verified = (filters ?? []).map((f) => ({ ...f, affiliate_url: publicAffiliateUrl(f.affiliate_url) }));
+  return json({ contaminant: def, verified_filters: verified });
 }

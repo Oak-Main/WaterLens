@@ -7,14 +7,17 @@ import {
 } from "../types";
 import {
   DISCLAIMER_AFFILIATE,
+  DISCLAIMER_UNPAID_LINKS,
   DISCLAIMER_MEDICAL,
   DISCLAIMER_PLUMBING,
   DISCLAIMER_TIER3,
   ENGINE_VERSION,
   NITRATE_CODES,
   NITRATE_WARNING,
+  PAID_OFFER_HOSTS,
 } from "../config/constants";
 import { cacheKeys, getJson, putJson, ttl } from "../lib/cache";
+import { isPaidAffiliateUrl } from "../lib/offers";
 import { geocode } from "../lib/geocode";
 import { resolvePws } from "./spatial";
 import { fetchPwsidsForZip, getSdwisProfile } from "./sdwis";
@@ -36,8 +39,14 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
-function buildDisclaimers(tier: MatchTier): string[] {
-  const out = [DISCLAIMER_MEDICAL, DISCLAIMER_PLUMBING, DISCLAIMER_AFFILIATE];
+// The affiliate disclaimer is stated only when a recommended filter actually carries a paid link.
+export function buildDisclaimers(
+  tier: MatchTier,
+  filters: { affiliate_url: string | null }[] = [],
+  paidHosts: readonly string[] = PAID_OFFER_HOSTS
+): string[] {
+  const paid = filters.some((f) => isPaidAffiliateUrl(f.affiliate_url, paidHosts));
+  const out = [DISCLAIMER_MEDICAL, DISCLAIMER_PLUMBING, paid ? DISCLAIMER_AFFILIATE : DISCLAIMER_UNPAID_LINKS];
   if (tier === MatchTier.MODELED || tier === MatchTier.NONE) {
     out.splice(1, 0, DISCLAIMER_TIER3);
   }
@@ -118,7 +127,7 @@ async function buildReport(
       sdwis_fetched_at: profile.fetched_at,
       generated_at: nowIso(),
     },
-    disclaimers: buildDisclaimers(match.tier),
+    disclaimers: buildDisclaimers(match.tier, recommended),
     meta: { cache_hit: false, engine_version: ENGINE_VERSION, resolution },
   };
 }

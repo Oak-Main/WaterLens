@@ -56,10 +56,24 @@ export const DISCLAIMER_PLUMBING =
   "contamination such as legacy household lead service lines. A point-of-use lab test is the only " +
   "way to verify contamination introduced by your home's plumbing.";
 
+/**
+ * Hostnames whose affiliate_url counts as a paid link. Mirrors PAID_OFFER_HOSTS in
+ * web/lib/offers.ts: keep both empty until a program is approved for this site and its
+ * destination has been verified, and change them together. A non-null affiliate_url on
+ * any other host is not treated as paid, so the commission notice cannot appear for it.
+ */
+export const PAID_OFFER_HOSTS: readonly string[] = [];
+
+/** Used only when at least one recommended filter carries a paid link (its host is in PAID_OFFER_HOSTS). */
 export const DISCLAIMER_AFFILIATE =
-  "Recommended hardware links are affiliate placements. Products are surfaced solely because they " +
+  "Some recommended hardware links are affiliate placements. Products are surfaced solely because they " +
   "hold independently verified NSF/ANSI health certifications for the detected contaminants; " +
   "commercial rankings never override objective scientific data.";
+
+/** Used when no recommended filter carries a paid link (the default while PAID_OFFER_HOSTS is empty). */
+export const DISCLAIMER_UNPAID_LINKS =
+  "No recommended hardware in this report carries an affiliate link. Products are surfaced solely because they " +
+  "hold independently verified NSF/ANSI health certifications for the detected contaminants.";
 
 // -----------------------------------------------------------------------------
 // SDWIS / Envirofacts — SDWA table names (§10, §22).
