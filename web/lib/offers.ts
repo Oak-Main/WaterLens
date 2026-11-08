@@ -38,7 +38,17 @@ function httpsHost(url: string | null | undefined): string | null {
 
 export function isPaidUrl(url: string | null | undefined): boolean {
   const host = httpsHost(url);
-  return host !== null && PAID_OFFER_HOSTS.includes(host);
+  return host !== null && PAID_OFFER_HOSTS.some((listed) => listed.toLowerCase() === host);
+}
+
+/** Visible button text. A paid link may go to a retailer, so it does not name the maker's site. */
+export function offerLinkText(offer: Offer, brand: string): string {
+  return offer.paid ? "View offer" : `View at ${brand}`;
+}
+
+/** Accessible name: starts with the visible text so voice control can target it (WCAG 2.5.3). */
+export function offerAriaLabel(offer: Offer, brand: string, model: string): string {
+  return `${offerLinkText(offer, brand)}: ${brand} ${model} (opens in a new tab)`;
 }
 
 /** The link a recommendation renders: a verified paid destination, else the maker's site. */

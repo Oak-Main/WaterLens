@@ -14,12 +14,14 @@ function checkFilterLinks(html, path) {
   // The former redirect host affil.waterqualitylens.com does not resolve; no link may use it.
   assert.doesNotMatch(hardware, /affil\.waterqualitylens\.com/i, path + ": link to the unresolvable redirect host");
   assert.doesNotMatch(hardware, /\[\[COPY:/i, path + ": editorial placeholder");
-  const links = [...hardware.matchAll(/<a\b[^>]*\baria-label="View the [^"]*site \(opens in a new tab\)"[^>]*>/gi)];
+  const links = [...hardware.matchAll(/<a\b[^>]*\baria-label="View at [^"]*\(opens in a new tab\)"[^>]*>/gi)];
   assert.ok(links.length, path + ": expected filter maker links");
   // No paid destination is configured (lib/offers.ts), so the notice and every link say unpaid.
   assert.match(hardware.slice(0, links[0].index), /<p\b[^>]*role="note"[^>]*>[^<]*earns no commission[^<]*<\/p>/i,
     path + ": missing unpaid-link notice before the first filter link");
   assert.doesNotMatch(hardware, /may earn a commission/i, path + ": commission wording with no paid destination");
+  assert.doesNotMatch(hardware, />\s*Affiliate\s*</, path + ": Affiliate badge on unpaid links");
+  assert.doesNotMatch(hardware, /Verified\s+Partner|affiliate placement|commercial placement/i, path + ": paid-placement wording on unpaid links");
   for (const [tag] of links) {
     assert.match(tag, /\bhref="https:\/\/[^"]+"/i, path + ": filter link must be https");
     assert.doesNotMatch(tag, /\brel="[^"]*\bsponsored\b/i, path + ": unpaid link marked sponsored");

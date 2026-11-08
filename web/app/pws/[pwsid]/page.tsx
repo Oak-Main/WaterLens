@@ -33,7 +33,7 @@ import {
   usd,
 } from "@/lib/format";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
-import { offerFor } from "@/lib/offers";
+import { offerAriaLabel, offerFor, offerLinkText } from "@/lib/offers";
 import { DISCLAIMER_AFFILIATE, DISCLAIMER_PLUMBING } from "@/lib/constants";
 import type { Detection, RecommendedFilter, Violation } from "@/lib/types";
 
@@ -315,9 +315,9 @@ function RecommendationCard({ r }: { r: RecommendedFilter }) {
             rel={offer.rel}
             variant="secondary"
             fullWidth
-            aria-label={`View the ${r.brand} ${r.model} on ${r.brand}'s site (opens in a new tab)`}
+            aria-label={offerAriaLabel(offer, r.brand, r.model)}
           >
-            View at {r.brand}
+            {offerLinkText(offer, r.brand)}
           </Button>
         </div>
       ) : null}

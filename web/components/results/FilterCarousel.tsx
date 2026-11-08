@@ -1,7 +1,7 @@
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Badge, Button } from "@/components/ui";
 import { DISCLAIMER_AFFILIATE } from "@/lib/constants";
-import { offerFor } from "@/lib/offers";
+import { offerAriaLabel, offerFor, offerLinkText } from "@/lib/offers";
 import { contaminantName } from "@/lib/data";
 import { FORM_FACTOR_LABEL, standardLabel, usd } from "@/lib/format";
 import type { DwellingType, FormFactor, RecommendedFilter } from "@/lib/types";
@@ -146,9 +146,9 @@ function FilterCard({
             rel={offer.rel}
             fullWidth
             size="sm"
-            aria-label={`View the ${filter.brand} ${filter.model} on ${filter.brand}'s site (opens in a new tab)`}
+            aria-label={offerAriaLabel(offer, filter.brand, filter.model)}
           >
-            View at {filter.brand}
+            {offerLinkText(offer, filter.brand)}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -168,6 +168,7 @@ export function FilterCarousel({
 }) {
   if (filters.length === 0) return null;
   const offers = filters.map(offerFor);
+  const anyPaid = offers.some((offer) => offer?.paid);
 
   // Two results in a 3-column grid left a dead column; size the grid to the
   // actual count so the commercial block never looks unfinished.
@@ -190,7 +191,7 @@ export function FilterCarousel({
             <span className="text-eyebrow uppercase text-ink-500 dark:text-ink-400">
               Recommended hardware
             </span>
-            <Badge tone="verdant">Affiliate</Badge>
+            <Badge tone="verdant">{anyPaid ? "Affiliate" : "Direct links"}</Badge>
           </div>
           <h2 id="filters-heading" className="mt-1 text-title-1">
             Filters certified for these contaminants
@@ -203,7 +204,7 @@ export function FilterCarousel({
         dwelling, never commercial arrangement.
       </p>
 
-      {offers.some(Boolean) && <AffiliateDisclosure paid={offers.some((offer) => offer?.paid)} />}
+      {offers.some(Boolean) && <AffiliateDisclosure paid={anyPaid} />}
       <div
         className={`mt-6 grid grid-flow-col auto-cols-[19rem] grid-rows-1 gap-4 overflow-x-auto scroll-px-5 pb-2 snap-x sm:grid-flow-row sm:auto-cols-auto sm:overflow-visible ${cols}`}
       >

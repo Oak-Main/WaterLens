@@ -54,7 +54,7 @@ export const DISCLAIMER_AFFILIATE = PAID_OFFERS_ENABLED
   ? "Some recommended hardware links are affiliate placements. Products are surfaced solely because they " +
     "hold independently verified NSF/ANSI health certifications for the detected contaminants; " +
     "commercial rankings never override objective scientific data."
-  : "Recommended hardware and lab-test links go directly to the manufacturers, and WaterQualityLens earns " +
+  : "Recommended hardware links go directly to the manufacturers and the lab-test link to SimpleLab's Tap Score; WaterQualityLens earns " +
     "nothing from them. Products are surfaced solely because they hold independently verified NSF/ANSI " +
     "health certifications for the detected contaminants.";
 

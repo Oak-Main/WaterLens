@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
-import { offerFor } from "@/lib/offers";
+import { offerAriaLabel, offerFor, offerLinkText } from "@/lib/offers";
 import {
   Badge,
   Button,
@@ -307,6 +307,7 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
 
   const unit = unitLabel(c);
   const verified = verifiedFiltersFor(c.code);
+  const hardwarePaid = verified.some(({ filter }) => offerFor(filter)?.paid);
   const isNitrate = NITRATE_CODES.has(c.code);
   const counts = claimCountsByStandard(c.code);
   const systems = systemsReporting(c.code);
@@ -651,12 +652,12 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
         </Section>
       ) : null}
 
-      {/* Hardware — commercial placements, kept below the objective record -- */}
+      {/* Hardware — kept below the objective record ---------------------- */}
       <Section id="hardware" tone="sunken">
         <Container>
           <div className="rounded-3xl border border-hairline bg-surface-base p-6 shadow-card sm:p-10">
             <SectionHeading
-              eyebrow="Certified reduction · commercial placements"
+              eyebrow={hardwarePaid ? "Certified reduction · commercial placements" : "Certified reduction · manufacturer links"}
               title={`Filters verified to reduce ${c.name}`}
               lede={
                 <>
@@ -671,7 +672,7 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
             />
 
             {verified.some(({ filter }) => offerFor(filter)) && (
-              <AffiliateDisclosure paid={verified.some(({ filter }) => offerFor(filter)?.paid)} />
+              <AffiliateDisclosure paid={hardwarePaid} />
             )}
             {verified.length > 0 ? (
               <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -720,9 +721,9 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
                           rel={offer.rel}
                           variant="secondary"
                           fullWidth
-                          aria-label={`View the ${filter.brand} ${filter.model} on ${filter.brand}'s site (opens in a new tab)`}
+                          aria-label={offerAriaLabel(offer, filter.brand, filter.model)}
                         >
-                          View at {filter.brand}
+                          {offerLinkText(offer, filter.brand)}
                         </Button>
                       </div>
                     ) : null}
@@ -748,10 +749,12 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
             )}
 
             <p className="mt-8 max-w-3xl text-xs leading-relaxed text-ink-500 dark:text-ink-400">
-              Hardware links are affiliate placements marked &ldquo;Verified
-              Partner.&rdquo; Products appear here solely because they hold an
-              independently verified NSF/ANSI health certification for {c.name};
-              commercial arrangements never affect this list.
+              {hardwarePaid
+                ? "Some hardware links are affiliate placements, disclosed before the links. "
+                : "Hardware links go directly to the manufacturers and earn WaterQualityLens nothing. "}
+              Products appear here solely because they hold an independently
+              verified NSF/ANSI health certification for {c.name}; commercial
+              arrangements never affect this list.
             </p>
           </div>
         </Container>

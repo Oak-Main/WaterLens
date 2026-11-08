@@ -249,8 +249,8 @@ export default function AboutPage() {
                 <Prose className="mt-6">
                   <p>
                     {PAID_OFFERS_ENABLED
-                      ? "Some hardware and lab-test links are affiliate placements, and a notice appears before them. We keep that revenue from ever touching the science: a product can only appear after it has independently qualified on the relevant NSF/ANSI health certification for a detected contaminant. Commercial ranking never overrides the data."
-                      : "Hardware and lab-test links go straight to the manufacturers today, and we earn nothing from them. If that changes, a notice will appear before any paid link. Either way, a product can only appear after it has independently qualified on the relevant NSF/ANSI health certification for a detected contaminant, and commercial ranking never overrides the data."}
+                      ? "Some hardware links are affiliate placements, and a notice appears before them. We keep that revenue from ever touching the science: a product can only appear after it has independently qualified on the relevant NSF/ANSI health certification for a detected contaminant. Commercial ranking never overrides the data."
+                      : "Hardware links go straight to the manufacturers today and the lab-test link to SimpleLab's Tap Score, and we earn nothing from them. If that changes, a notice will appear before any paid link. Either way, a product can only appear after it has independently qualified on the relevant NSF/ANSI health certification for a detected contaminant, and commercial ranking never overrides the data."}
                   </p>
                   <p>
                     Display advertising is restricted, and it never appears
