@@ -751,7 +751,7 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
             <p className="mt-8 max-w-3xl text-xs leading-relaxed text-ink-500 dark:text-ink-400">
               {hardwarePaid
                 ? "Some hardware links are affiliate placements, disclosed before the links. "
-                : "Hardware links go directly to the manufacturers and earn WaterQualityLens nothing. "}
+                : "Hardware links go directly to the manufacturers, with no affiliate tracking. "}
               Products appear here solely because they hold an independently
               verified NSF/ANSI health certification for {c.name}; commercial
               arrangements never affect this list.

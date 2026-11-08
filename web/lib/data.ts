@@ -79,8 +79,8 @@ export const CERTIFICATIONS: Record<NsfStandard, { description: string; is_healt
   "P473": { description: "Retired 2022 PFOA/PFOS standard; absorbed into NSF/ANSI 53 and 58.", is_health: false, is_obsolete: true },
 };
 
-// affiliate_url stays null: no program is approved and the former redirect host does not
-// resolve. maker_url is the manufacturer's own product page where one was verified (HTTP 200,
+// affiliate_url stays null: no program is confirmed for this site and the former redirect
+// host did not resolve in checks on 2026-11-08. maker_url is the manufacturer's own product page where one was verified (HTTP 200,
 // same model, 2026-11-08), otherwise the manufacturer's home page. See lib/offers.ts.
 export const FILTERS: Filter[] = [
   { id: 1, brand: "ZeroWater", model: "5-Stage Ready-Pour Pitcher", sku: "ZW-ZD010RP", form_factor: "PITCHER", price_usd: 39.99, capacity_gallons: 25, affiliate_url: null, maker_url: "https://zerowater.com/", active: 1 },

@@ -92,7 +92,7 @@ const DISCLOSURES: Disclosure[] = [
     text: DISCLAIMER_AFFILIATE,
     context: PAID_OFFERS_ENABLED
       ? "Some hardware links are affiliate placements, and we may earn a commission. A notice appears before those links, and a product only appears after qualifying on the relevant NSF/ANSI health certification. Commercial ranking never reorders the science."
-      : "We have no affiliate relationship with any filter maker or lab today. Hardware links go straight to the manufacturer and the lab-test link to SimpleLab's Tap Score, and a product only appears after qualifying on the relevant NSF/ANSI health certification. If that changes, a notice will appear before any paid link.",
+      : "None of the hardware or lab-test links on this site carries affiliate tracking. Hardware links go straight to the manufacturer and the lab-test link to SimpleLab's Tap Score, and a product only appears after qualifying on the relevant NSF/ANSI health certification. If that changes, a notice will appear before any paid link.",
   },
 ];
 

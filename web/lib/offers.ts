@@ -1,9 +1,10 @@
 /**
  * Outbound product links: filter recommendations and the Tap Score lab test.
  *
- * TapToGlass has no approved affiliate program, and the former redirect host
- * affil.waterqualitylens.com does not resolve (NXDOMAIN, checked 2026-11-08), so
- * every recommendation links straight to its manufacturer and earns nothing.
+ * No affiliate program is confirmed for TapToGlass, and the former redirect host
+ * affil.waterqualitylens.com did not resolve in checks on 2026-11-08 (NXDOMAIN at two
+ * public resolvers; its registration status was not established). So every
+ * recommendation links straight to its manufacturer, with no affiliate tracking.
  *
  * A paid destination is used only when its hostname is listed in PAID_OFFER_HOSTS.
  * Keep the list empty until a program is approved for this site and its destination

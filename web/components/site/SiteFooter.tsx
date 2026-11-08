@@ -79,7 +79,7 @@ export function SiteFooter() {
             <span className="max-w-xl">
               {PAID_OFFERS_ENABLED
                 ? "Some hardware links are affiliate placements, disclosed before the links. Commercial ranking never overrides data."
-                : "Hardware links go straight to the manufacturers and the lab-test link to SimpleLab; we earn nothing from them. Commercial ranking never overrides data."}
+                : "Hardware links go straight to the manufacturers and the lab-test link to SimpleLab, with no affiliate tracking. Commercial ranking never overrides data."}
             </span>
           </div>
         </div>

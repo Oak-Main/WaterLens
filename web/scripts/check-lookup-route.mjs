@@ -11,7 +11,7 @@ import { promisify } from "node:util";
 function checkFilterLinks(html, path) {
   const hardware = html.match(/<section\b[^>]*\bid="(?:hardware|filters)"[^>]*>[\s\S]*?<\/section>/i)?.[0];
   assert.ok(hardware, path + ": missing hardware section");
-  // The former redirect host affil.waterqualitylens.com does not resolve; no link may use it.
+  // The former redirect host affil.waterqualitylens.com did not resolve in checks on 2026-11-08; no link may use it.
   assert.doesNotMatch(hardware, /affil\.waterqualitylens\.com/i, path + ": link to the unresolvable redirect host");
   assert.doesNotMatch(hardware, /\[\[COPY:/i, path + ": editorial placeholder");
   const links = [...hardware.matchAll(/<a\b[^>]*\baria-label="View at [^"]*\(opens in a new tab\)"[^>]*>/gi)];
