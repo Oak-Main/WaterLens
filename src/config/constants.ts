@@ -72,7 +72,7 @@ export const DISCLAIMER_AFFILIATE =
 
 /** Used when no recommended filter carries a paid link (the default while PAID_OFFER_HOSTS is empty). */
 export const DISCLAIMER_UNPAID_LINKS =
-  "Recommended hardware links carry no affiliate tracking. Products are surfaced solely because they " +
+  "No recommended hardware in this report carries an affiliate link. Products are surfaced solely because they " +
   "hold independently verified NSF/ANSI health certifications for the detected contaminants.";
 
 // -----------------------------------------------------------------------------

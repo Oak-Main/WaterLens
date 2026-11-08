@@ -17,6 +17,7 @@ import {
   PAID_OFFER_HOSTS,
 } from "../config/constants";
 import { cacheKeys, getJson, putJson, ttl } from "../lib/cache";
+import { isPaidAffiliateUrl } from "../lib/offers";
 import { geocode } from "../lib/geocode";
 import { resolvePws } from "./spatial";
 import { fetchPwsidsForZip, getSdwisProfile } from "./sdwis";
@@ -36,20 +37,6 @@ import { matchFilters } from "./setcover";
 
 function nowIso(): string {
   return new Date().toISOString();
-}
-
-/** True only for an https URL whose hostname is listed in `paidHosts` (same rule as web/lib/offers.ts). */
-export function isPaidAffiliateUrl(url: string | null, paidHosts: readonly string[] = PAID_OFFER_HOSTS): boolean {
-  if (!url) return false;
-  let host: string;
-  try {
-    const u = new URL(url);
-    if (u.protocol !== "https:") return false;
-    host = u.hostname.toLowerCase();
-  } catch {
-    return false;
-  }
-  return paidHosts.some((listed) => listed.toLowerCase() === host);
 }
 
 // The affiliate disclaimer is stated only when a recommended filter actually carries a paid link.

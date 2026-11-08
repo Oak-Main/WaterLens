@@ -1,5 +1,6 @@
 import { Env } from "../types";
 import { json } from "../lib/http";
+import { publicAffiliateUrl } from "../lib/offers";
 
 // -----------------------------------------------------------------------------
 // GET /api/filters                 -> Filter Certification Registry (§9 asset)
@@ -59,6 +60,7 @@ export async function handleFilterRegistry(req: Request, env: Env): Promise<Resp
       !hasHealth && standards.some((s) => s === "42" || s === "372");
     return {
       ...f,
+      affiliate_url: publicAffiliateUrl(f.affiliate_url),
       standards: standards.sort(),
       health_certified: hasHealth,
       // Flag the deceptive pattern: markets 42/372 but holds no health cert.

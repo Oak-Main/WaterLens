@@ -12,6 +12,7 @@ import {
   MAX_RECOMMENDATIONS,
   isHealthStandard,
 } from "../config/constants";
+import { publicAffiliateUrl } from "../lib/offers";
 
 // -----------------------------------------------------------------------------
 // Constrained set-cover recommendation engine (§12).
@@ -181,7 +182,7 @@ export async function matchFilters(
       form_factor: f.form_factor,
       price_usd: f.price_usd,
       capacity_gallons: f.capacity_gallons,
-      affiliate_url: f.affiliate_url,
+      affiliate_url: publicAffiliateUrl(f.affiliate_url),
       certified_standards: [...standards].sort(),
       neutralizes,
       full_coverage: true,
