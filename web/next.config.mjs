@@ -23,7 +23,14 @@ const nextConfig = {
   poweredByHeader: false,
   async redirects() {
     // Keep older /check links usable; the address form lives on the homepage.
-    return [{ source: "/check", destination: "/#lookup", permanent: false }];
+    return [
+      { source: "/check", destination: "/#lookup", permanent: false },
+      // Legal routes readers and crawlers expect. The text lives on /legal (sections #privacy and #terms).
+      { source: "/privacy", destination: "/legal#privacy", permanent: true },
+      { source: "/privacy-policy", destination: "/legal#privacy", permanent: true },
+      { source: "/terms", destination: "/legal#terms", permanent: true },
+      { source: "/affiliate-disclosure", destination: "/legal#affiliate", permanent: true },
+    ];
   },
   async headers() {
     return [
