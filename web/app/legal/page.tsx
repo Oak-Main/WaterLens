@@ -32,6 +32,7 @@ export function generateMetadata(): Metadata {
 }
 
 const TOC: TocItem[] = [
+  { id: "who-runs-this-site", label: "Who runs this site" },
   { id: "medical", label: "01 · Medical" },
   { id: "plumbing", label: "02 · Plumbing limits" },
   { id: "mapping", label: "03 · Mapping confidence" },
@@ -142,6 +143,27 @@ export default function LegalPage() {
             <TableOfContents items={TOC} className="mb-10 lg:mb-0" />
 
             <div className="min-w-0 space-y-16 lg:space-y-24">
+              {/* Operator */}
+              <section
+                id="who-runs-this-site"
+                aria-labelledby="who-runs-this-site-h"
+                className="scroll-mt-24"
+              >
+                <SectionHeading
+                  id="who-runs-this-site-h"
+                  title="Who runs this site"
+                />
+                <Prose className="mt-6">
+                  <p>
+                    Tap to Glass (taptoglass.com) is operated by Oak and Main
+                    Developers LLC, 1223 Cleveland Ave, Suite 200, San Diego, CA
+                    92103. Contact: admin@oakandmain.dev. This page is effective
+                    November 12, 2026 and is governed by the laws of the State of
+                    California.
+                  </p>
+                </Prose>
+              </section>
+
               {/* Disclosures */}
               <section aria-labelledby="disclosures-h">
                 <SectionHeading
