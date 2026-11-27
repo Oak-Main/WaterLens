@@ -68,7 +68,7 @@ export default async function ResultsPage(
             </p>
             <h1 className="mt-3 text-display-2">Enter an address to see its water report</h1>
             <p className="mx-auto mt-4 max-w-xl text-lede text-ink-600 dark:text-ink-300">
-              We use the EPA ZIP registry to suggest a potential water system and link to official records.
+              Lookup can suggest a system where the EPA ZIP registry has coverage. The water systems directory links to official records.
             </p>
           </div>
           <div className="mx-auto mt-8 max-w-2xl">

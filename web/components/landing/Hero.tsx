@@ -35,7 +35,7 @@ export function Hero() {
               </h1>
 
               <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-600 sm:mt-6 sm:text-lede dark:text-ink-300">
-                Enter your address or ZIP code to find a potential water system. Confirm your supplier on your water bill.
+                Search by address or ZIP code. EPA registry coverage varies, so confirm your supplier on your water bill.
               </p>
 
               <div className="glow-brand mt-6 sm:mt-8">

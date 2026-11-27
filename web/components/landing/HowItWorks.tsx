@@ -49,7 +49,7 @@ const STEPS: Step[] = [
     tag: "ZIP registry",
     body: (
       <>
-        We use the EPA ZIP registry to suggest a potential water system. Confirm the utility name on your water bill.
+        Where the EPA registry lists ZIP coverage, lookup can suggest a system. Confirm your supplier on your water bill.
       </>
     ),
   },

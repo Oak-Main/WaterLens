@@ -71,7 +71,7 @@ export default function PwsIndexPage() {
               Find a public water system by name or EPA system ID and follow links to its official records.
             </p>
             <p className="mt-4 text-sm leading-relaxed text-ink-600 dark:text-ink-300">
-              A lookup can suggest a system from the federal ZIP registry. Confirm your supplier on your water bill.
+              Where EPA ZIP coverage is available, lookup can suggest a system. Confirm your supplier on your water bill.
             </p>
           </div>
 

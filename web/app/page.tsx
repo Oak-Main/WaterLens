@@ -10,7 +10,7 @@ import { ClosingCta } from "@/components/landing/ClosingCta";
 export const metadata: Metadata = {
   title: "WaterQualityLens — What’s in your tap water, and what removes it",
   description:
-    "Find a potential public water system through the EPA ZIP registry, follow links to official water records, and browse independent filter certifications.",
+    "Search EPA ZIP coverage, follow links to official water records, and browse independent filter certifications.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -30,7 +30,7 @@ const faqJsonLd = {
       name: "How does WaterQualityLens find my water system?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "We use the EPA ZIP registry to suggest a potential water system. Check your water bill to confirm which system serves the address.",
+        text: "Where the EPA registry lists ZIP coverage, lookup can suggest a system. Check your water bill to confirm which system serves your address.",
       },
     },
     {

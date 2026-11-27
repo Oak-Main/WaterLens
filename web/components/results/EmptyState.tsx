@@ -97,8 +97,8 @@ export function EmptyState({
           </>
         ) : (
           <>
-            We couldn&rsquo;t retrieve a potential water system for this address from the EPA ZIP registry. Confirm the utility name printed on your most recent water bill, then
-            or consult the EPA service-area map.
+            EPA ZIP coverage varies. Check the utility name on your water bill,
+            browse the water systems directory, or consult the EPA service-area map.
           </>
         )}
       </p>
@@ -121,6 +121,7 @@ export function EmptyState({
         )}
         {variant === "no-match" ? (
           <>
+            <Button href="/pws" variant="secondary">Water systems directory</Button>
             <Button href="https://gispub.epa.gov/serviceareas" variant="secondary">EPA service-area map</Button>
             <Button href="/" variant="secondary">Search a different address</Button>
           </>

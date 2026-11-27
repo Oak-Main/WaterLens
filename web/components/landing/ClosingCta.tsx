@@ -22,7 +22,7 @@ export function ClosingCta() {
                 tone="inverse"
                 align="center"
                 title="Find official water records"
-                lede="Enter an address or ZIP code to find a potential utility and its official records."
+                lede="Search by address or ZIP code. You can also find official records through the water systems directory."
               />
             </Reveal>
 
