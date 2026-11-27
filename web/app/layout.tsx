@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 const SITE_DESC =
-  "Enter your address to see exactly which contaminants your public water system reports — and the specific, independently NSF-certified filters proven to remove them.";
+  "Look up a potential water system, find official water records, and browse independent filter certifications.";
 
 // Self-hosted variable faces (files committed under app/fonts). No CDN, no
 // network at build or runtime, and the type is the same on every platform.

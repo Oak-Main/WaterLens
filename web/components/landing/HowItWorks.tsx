@@ -46,41 +46,32 @@ const STEPS: Step[] = [
     n: "01",
     title: "Enter your address",
     icon: <PinIcon />,
-    tag: "Point-in-polygon",
+    tag: "ZIP registry",
     body: (
       <>
-        We geocode your address and resolve the public water system that serves
-        it using TEMM utility-boundary polygons &mdash; not a ZIP code. Every
-        match is graded on a three-tier confidence scale, so you always know how
-        certain the result is.
+        We use the EPA ZIP registry to suggest a potential water system. Confirm the utility name on your water bill.
       </>
     ),
   },
   {
     n: "02",
-    title: "See your utility’s reported contaminants",
+    title: "Find official water quality records",
     icon: <ReportIcon />,
-    tag: "Full provenance",
+    tag: "Official sources",
     body: (
       <>
-        We surface the contaminants your utility has reported to the EPA, each
-        shown with its sample date, testing agency, unit, and the legal maximum
-        contaminant level (MCL). Every number carries its source &mdash; no naked
-        figures, no proprietary scores.
+        Follow the links to the EPA and utility records for monitoring and compliance information.
       </>
     ),
   },
   {
     n: "03",
-    title: "Get the exact certified filters",
+    title: "Browse certified filters",
     icon: <FilterIcon />,
     tag: "SKU-level",
     body: (
       <>
-        We match the specific retail filter SKUs that hold independent NSF/ANSI
-        certification for your contaminants &mdash; and flag the standards that
-        don&rsquo;t apply, like carbon filters that cannot remove nitrate. The
-        recommendation follows the data, never the other way around.
+        The filter registry lists independent NSF/ANSI certifications by product and contaminant.
       </>
     ),
   },
@@ -93,8 +84,8 @@ export function HowItWorks() {
         <Reveal>
           <SectionHeading
             eyebrow="How it works"
-            title="From an address to a verified answer in three steps"
-            lede="The same deterministic pipeline runs for every address: identify the system, read the record, match the hardware. No account, no upsell in the way of the data."
+            title="From an address to official sources"
+            lede="Look up a potential system, consult the official record, and explore filter certifications."
           />
         </Reveal>
 

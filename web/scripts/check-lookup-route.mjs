@@ -92,45 +92,152 @@ try {
   assert.equal(missing.status, 404, "Unrelated unknown paths must remain 404");
   console.log("PASS unrelated unknown route remains 404");
 
-  // Cover both the empty report and a report with recommendations from the
-  // bundled Flint system. The latter renders the address-report filter carousel.
-  const shortReport = "/results?address=QA&dwelling_type=MULTI_FAMILY_RENTAL";
-  const flintReport = "/results?" + new URLSearchParams({ address: "Flint, MI 48503" });
-  for (const [path, title] of [
-    ["/contaminants/PB90", /<title>[^<]*Lead/i],
-    ["/pws/MI0002360", /<title>[^<]*Flint/i],
-    [shortReport, /<title>[^<]*Water report for QA/],
-    [flintReport, /<title>[^<]*Water report for Flint/],
-  ]) {
-    const response = await fetch(`${origin}${path}`, {
-      // Also check the complete HTML representation of the streamed report.
-      headers: path === flintReport ? { "User-Agent": "Twitterbot/1.0" } : {},
+  const forbidden = /NJ-2026-004[45]|MI-2026-0012|Clear Springs Water District|July 1, 2026|2026-07-01|SDWIS_LCR|\bNo reported (?:contaminant|exceedance)|All reported values within federal limits/i;
+  const reports = new Map([
+    ["NEWARK QA GEOCODE FIXTURE", "NJ0714001"],
+    ["FLINT QA 48503", "MI0002310"],
+  ]);
+
+  async function getHtml(path, expectedStatus = 200) {
+    const response = await fetch(origin + path, {
+      headers: { "User-Agent": "Twitterbot/1.0" },
+      redirect: "manual",
       signal: AbortSignal.timeout(10000),
     });
-    assert.equal(response.status, 200, `${path}: migrated page should load`);
+    assert.equal(response.status, expectedStatus, path);
     const html = await response.text();
-    assert.match(html, title, `${path}: async parameters should reach metadata`);
-    if (path === shortReport) {
-      assert.match(html, /Enter an address to see its water report/);
-      assert.match(html, /value="QA"/);
-      assert.match(html, /name="robots" content="noindex, nofollow"/);
-      assert.equal(response.headers.get("x-robots-tag"), "noindex, nofollow");
-    } else {
-      checkFilterLinks(html, path);
-    }
-    console.log(`PASS migrated page ${path}`);
+    assert.doesNotMatch(html, forbidden, path);
+    return { html, response };
   }
-  // Chrome runs the scripts that assemble the streamed report into its final DOM.
+
+  for (const [pwsid, name, official] of [
+    ["NJ0714001", "Newark Water Department", "water.newarknj.gov/waterquality"],
+    ["MI0002310", "City of Flint", "michigan.gov/egle/"],
+  ]) {
+    const path = "/pws/" + pwsid;
+    const { html } = await getHtml(path);
+    assert.ok(html.includes(name), path);
+    assert.ok(html.includes(official), path);
+    assert.match(html, /Verified water quality records unavailable/);
+    assert.match(html, /name="robots" content="noindex, follow"/);
+    assert.ok(html.includes(`rel="canonical" href="https://www.taptoglass.com${path}"`), path);
+    assert.doesNotMatch(html, /Above federal limit|Active violations|sampling-chart|Filters certified for these contaminants|Data as of/i, path);
+  }
+
+  for (const pwsid of ["MI0002360", "TX0610001"]) {
+    const { html } = await getHtml("/pws/" + pwsid, 404);
+    assert.match(html, /name="robots" content="noindex/);
+  }
+
+  const { html: directory } = await getHtml("/pws");
+  assert.match(directory, /2 water systems/);
+  assert.match(directory, /Verified records unavailable/);
+  assert.doesNotMatch(directory, /MI0002360|TX0610001|above the federal limit|reported contaminant/i);
+  const { html: sitemap } = await getHtml("/sitemap.xml");
+  assert.doesNotMatch(sitemap, /<loc>[^<]*\/pws\/[^<]+<\/loc>/);
+  assert.match(sitemap, /<loc>https:\/\/www\.taptoglass\.com\/pws<\/loc>/);
+
+  const { html: home } = await getHtml("/");
+  assert.match(home, /Verified records unavailable/);
+  assert.doesNotMatch(home, /MI0002360|180% of MCL|27 µg\/L|data.*weekly refresh/i);
+
+  for (const code of ["PB90", "CU90"]) {
+    const path = "/contaminants/" + code;
+    const { html } = await getHtml(path);
+    assert.match(html, /<title>[^<]*Action Level/i);
+    assert.match(html, /Action level \(90th percentile\)/i);
+    assert.match(html, /epa\.gov\/dwreginfo\/lead-and-copper-rule/);
+    assert.doesNotMatch(html, /Legal MCL|Enforceable limit \(MCL\)|Systems reporting|NJ0714001|MI0002310|15 µg\/L/i);
+    checkFilterLinks(html, path);
+  }
+  const { html: contaminantControl } = await getHtml("/contaminants/1005");
+  assert.match(contaminantControl, /Legal MCL/);
+
+  const shortReport = "/results?address=QA&dwelling_type=MULTI_FAMILY_RENTAL";
+  const { html: shortHtml, response: shortResponse } = await getHtml(shortReport);
+  assert.match(shortHtml, /<title>[^<]*Water report for QA/);
+  assert.match(shortHtml, /Enter an address to see its water report/);
+  assert.match(shortHtml, /value="QA"/);
+  assert.match(shortHtml, /name="robots" content="noindex, nofollow"/);
+  assert.equal(shortResponse.headers.get("x-robots-tag"), "noindex, nofollow");
+
+  function checkCandidateHtml(html, pwsid) {
+    assert.ok(html.includes(pwsid));
+    assert.match(html, /Verified water quality records unavailable/);
+    assert.match(html, /ZIP registry candidate/);
+    assert.match(html, /EPA ECHO ZIP registry/);
+    assert.doesNotMatch(html, forbidden);
+    assert.doesNotMatch(html, /Utility data as of|Open health violations|% confidence|filters certified for your|supplying water system/i);
+  }
+
+  function checkUnavailablePayload(report) {
+    for (const field of ["detected_contaminants", "history", "active_violations", "recommended_filters"]) {
+      assert.deepEqual(report[field], [], field);
+    }
+    assert.equal(report.service_boundary, null);
+    assert.equal(report.data_freshness.sdwis_fetched_at, null);
+    assert.equal(report.match.confidence, 0);
+    assert.match(report.disclaimers[0], /Verified measurements and violation records are unavailable/);
+    assert.doesNotMatch(JSON.stringify(report), forbidden);
+  }
+
+  function reportPath(address) {
+    return "/results?" + new URLSearchParams({ address });
+  }
+
+  for (const [address, pwsid] of reports) {
+    const { html } = await getHtml(reportPath(address));
+    checkCandidateHtml(html, pwsid);
+    for (const method of ["GET", "POST"]) {
+      const response = method === "GET"
+        ? await fetch(origin + "/api/lookup?" + new URLSearchParams({ address }))
+        : await fetch(origin + "/api/lookup", {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address }),
+        });
+      assert.equal(response.status, 200);
+      const report = await response.json();
+      assert.equal(report.utility.pwsid, pwsid);
+      assert.equal(report.meta.resolution, "ZIP_REGISTRY");
+      assert.equal(report.multi_system_warning, pwsid === "NJ0714001");
+      checkUnavailablePayload(report);
+    }
+  }
+
+  // Empty, mismatched, capped and failed provider responses never present a
+  // confirmed address match, violation count, or clean-water verdict.
+  for (const [address, pwsid] of [
+    ["QA FIXTURE 00003", null],
+    ["QA FIXTURE 00001", null],
+    ["QA FIXTURE 00002", "NJ0714001"],
+    ["QA FIXTURE 78701", null],
+    ["NEWARK QA WITH NO ZIP", null],
+  ]) {
+    const response = await fetch(origin + "/api/lookup?" + new URLSearchParams({ address }));
+    assert.equal(response.status, 200);
+    const report = await response.json();
+    assert.equal(report.match.pwsid, pwsid);
+    checkUnavailablePayload(report);
+    const { html } = await getHtml(reportPath(address));
+    if (pwsid) checkCandidateHtml(html, pwsid);
+    else assert.match(html, /We couldn(?:'|&#x27;)t confirm your water system/);
+  }
+  console.log("PASS public records, directory, reference thresholds, sitemap, and offline lookups");
+
+  // Exercise the final DOM of both streamed reports in a browser.
   if (process.env.CHROME_BIN) {
     const profile = await mkdtemp(join(tmpdir(), "waterlens-report-"));
     try {
-      const { stdout } = await promisify(execFile)(process.env.CHROME_BIN, [
-        "--headless", "--no-first-run", "--disable-background-networking",
-        "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1",
-        "--user-data-dir=" + profile, "--virtual-time-budget=5000", "--dump-dom", origin + flintReport,
-      ], { timeout: 30_000, maxBuffer: 4 * 1024 * 1024 });
-      checkFilterLinks(stdout, "Flint address report in Chrome");
-      console.log("PASS hydrated Flint address report in Chrome");
+      for (const [address, pwsid] of reports) {
+        const { stdout } = await promisify(execFile)(process.env.CHROME_BIN, [
+          "--headless", "--no-first-run", "--disable-background-networking",
+          "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1",
+          "--user-data-dir=" + profile, "--virtual-time-budget=5000", "--dump-dom", origin + reportPath(address),
+        ], { timeout: 30_000, maxBuffer: 4 * 1024 * 1024 });
+        checkCandidateHtml(stdout, pwsid);
+      }
+      console.log("PASS hydrated Newark and Flint registry results in Chrome");
     } finally {
       await rm(profile, { recursive: true, force: true });
     }

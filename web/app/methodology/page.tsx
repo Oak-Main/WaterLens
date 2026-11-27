@@ -10,7 +10,6 @@ import {
   Pill,
 } from "@/components/ui";
 import { Prose } from "@/components/institutional/Prose";
-import { TierExplainer } from "@/components/institutional/TierExplainer";
 import {
   TableOfContents,
   type TocItem,
@@ -20,7 +19,7 @@ import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 export function generateMetadata(): Metadata {
   const title = "Methodology";
   const description =
-    "Exactly how WaterQualityLens resolves an address to its public water system, sources contaminant data from EPA SDWIS, and matches only genuinely certified filters to each hazard.";
+    "How Tap to Glass uses the EPA ZIP registry, links to official water quality records, and presents filter certifications.";
   return {
     title,
     description,
@@ -49,21 +48,9 @@ const SOURCES: {
 }[] = [
   {
     name: "EPA Safe Drinking Water Information System (SDWIS)",
-    role: "Utility-reported contaminant occurrence, violations, and system inventory, retrieved via the Envirofacts REST API.",
+    role: "Public system identities and ZIP associations via the EPA ECHO Drinking Water System Search. SDWIS also provides official compliance records.",
     license: "US Government public domain",
     tone: "brand",
-  },
-  {
-    name: "EPA community water system service-area boundaries",
-    role: "The July 2024 release of explicit utility service-area polygons used for Tier 1 point-in-polygon resolution.",
-    license: "US Government public domain",
-    tone: "brand",
-  },
-  {
-    name: "SimpleLab TEMM spatial layers",
-    role: "Tiered Explicit, Match, Model layers that augment boundary coverage for Tier 2 proxy and Tier 3 modeled matches.",
-    license: "MIT License (open source)",
-    tone: "verdant",
   },
   {
     name: "NSF/ANSI, WQA, and IAPMO certification registries",
@@ -161,7 +148,7 @@ export default function MethodologyPage() {
             <p className="mt-6 max-w-2xl text-lede text-ink-600 dark:text-ink-300">
               WaterQualityLens is an auditor, not an advocate. Every result is
               produced by the same deterministic pipeline: resolve the water
-              system, read its public record, and match only hardware that is
+              system candidate, find its public record, and look up hardware that is
               independently certified for the specific hazards found. This page
               documents each step and the confidence we attach to it.
             </p>
@@ -190,63 +177,17 @@ export default function MethodologyPage() {
                   eyebrow={<StepLabel n="01">Address resolution</StepLabel>}
                   id="resolution-h"
                   title="Resolving your address to a water system"
-                  lede="The supplier that serves your tap is a geographic fact, not a ZIP code. We geocode the address and test it against real utility service-area geometry using the three-tier TEMM approach — Tiered Explicit, Match, Model."
+                  lede="The EPA ZIP registry provides potential water systems. Confirm your supplier on your water bill."
                 />
 
                 <Prose className="mt-6">
                   <p>
-                    First we attempt an <strong>explicit boundary</strong> match:
-                    a point-in-polygon test that checks whether the geocoded
-                    coordinate falls inside a published EPA service-area polygon.
-                    When it does, the serving public water system (PWS) is known
-                    with certainty. When no polygon covers the point, we fall back
-                    to a <strong>matched proxy</strong> — the most probable system
-                    inferred from TEMM layers and corroborating identifiers — and,
-                    only as a last resort, to a <strong>modeled radius</strong>{" "}
-                    that infers the likely supplier from nearby systems.
-                  </p>
-                  <p>
-                    Each outcome carries an explicit confidence score, and that
-                    score is surfaced in the report rather than hidden. We would
-                    rather tell you a match is uncertain than present a
-                    precise-looking answer we cannot stand behind.
+                    The lookup uses a ZIP code from the address or the Census geocoder.
+                    If the registry returns multiple systems, the lookup shows one
+                    candidate based on the population figures in the retrieved records.
+                    Confirm the supplier for your address with your water bill.
                   </p>
                 </Prose>
-
-                <div className="mt-10">
-                  <TierExplainer />
-                </div>
-
-                {/*
-                  The one sanctioned amber surface: the Tier-3 mapping-ambiguity
-                  banner. Marked additionally by a left rule and a glyph so the
-                  signal never rests on hue alone.
-                */}
-                <div className="mt-8 flex flex-col gap-3 rounded-2xl border border-caution-200 border-l-4 border-l-caution-400 bg-caution-50 p-6 shadow-e1 sm:flex-row sm:items-start dark:border-caution-300/25 dark:border-l-caution-300 dark:bg-caution-300/10">
-                  <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-caution-100 text-caution-700 dark:bg-caution-300/15 dark:text-caution-200"
-                    aria-hidden="true"
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path
-                        d="M12 8.5v4.5M12 16h.01"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                      />
-                      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
-                    </svg>
-                  </span>
-                  <p className="text-sm leading-relaxed text-caution-900 dark:text-caution-100">
-                    <strong className="font-semibold">
-                      A Tier 3 modeled match
-                    </strong>{" "}
-                    is the one case where the map itself is uncertain. Those
-                    reports open with an amber banner recommending a physical lab
-                    test and asking you to confirm the utility name printed on
-                    your water bill.
-                  </p>
-                </div>
               </section>
 
               {/* 02 — Data sourcing & freshness */}
@@ -255,55 +196,25 @@ export default function MethodologyPage() {
                   eyebrow={<StepLabel n="02">Data sourcing</StepLabel>}
                   id="data-h"
                   title="Where the contaminant data comes from"
-                  lede="We do not test water or generate our own measurements. We faithfully report what your utility has already submitted to the federal government — with its origin attached to every value."
+                  lede="Tap to Glass provides utility identities and links to official water records. Verified measurements and violation records are currently unavailable here."
                 />
 
                 <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
                   <Prose>
                     <p>
-                      Occurrence data is drawn from the{" "}
-                      <strong>
-                        EPA Safe Drinking Water Information System (SDWIS)
-                      </strong>{" "}
-                      through the Envirofacts REST API — a US Government
-                      public-domain source. We ingest updates on a weekly cadence
-                      so newly published sampling results and violation records
-                      appear without long lags.
-                    </p>
-                    <p>
-                      Provenance is a first-class requirement, not a footnote.
-                      Every contaminant value in a report carries the four facts
-                      you need to judge it for yourself:
-                    </p>
-                    <ul>
-                      <li>
-                        <strong>Sample date</strong> — when the measurement was
-                        taken.
-                      </li>
-                      <li>
-                        <strong>Testing agency</strong> — who reported it.
-                      </li>
-                      <li>
-                        <strong>Unit</strong> — the measured concentration and its
-                        units.
-                      </li>
-                      <li>
-                        <strong>Legal MCL</strong> — the federal maximum
-                        contaminant level for context.
-                      </li>
-                    </ul>
-                    <p>
-                      A number without its source is not information we are
-                      willing to show. Where a utility has reported nothing for a
-                      contaminant, we say so plainly rather than implying absence
-                      is proof of safety.
+                      Consult the EPA Safe Drinking Water Information System (SDWIS),
+                      your state regulator, or your utility for monitoring and compliance records.
+                      Check each record&rsquo;s system ID, sample date, testing agency, units,
+                      and applicable regulatory threshold. Lead and copper use action levels
+                      for system-level 90th-percentile tap monitoring under the EPA Lead and
+                      Copper Rule.
                     </p>
                   </Prose>
 
                   <div className="flex flex-col gap-4">
                     <Card className="p-6">
                       <h3 className="text-title-2 text-ink-900 dark:text-white">
-                        Ingestion at a glance
+                        Registry lookup at a glance
                       </h3>
                       <dl className="mt-4 space-y-4">
                         <div className="flex items-baseline justify-between gap-4">
@@ -319,23 +230,7 @@ export default function MethodologyPage() {
                             Access
                           </dt>
                           <dd className="text-right text-sm font-medium text-ink-900 dark:text-white">
-                            Envirofacts REST API
-                          </dd>
-                        </div>
-                        <div className="flex items-baseline justify-between gap-4">
-                          <dt className="text-sm text-ink-600 dark:text-ink-300">
-                            Refresh cadence
-                          </dt>
-                          <dd className="text-right">
-                            <Pill tone="verdant">Weekly</Pill>
-                          </dd>
-                        </div>
-                        <div className="flex items-baseline justify-between gap-4">
-                          <dt className="text-sm text-ink-600 dark:text-ink-300">
-                            Per-value provenance
-                          </dt>
-                          <dd className="text-right">
-                            <Pill tone="brand">Always shown</Pill>
+                            EPA ECHO Drinking Water System Search
                           </dd>
                         </div>
                       </dl>
@@ -495,9 +390,7 @@ export default function MethodologyPage() {
                 </ul>
 
                 <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-500 dark:text-ink-400">
-                  Address-to-system mapping uses the July 2024 EPA community water
-                  system service-area boundaries, augmented by SimpleLab&rsquo;s
-                  open-source TEMM layers. Certification data is curated from the
+                  The registry lookup uses EPA ZIP associations. Certification data is curated from the
                   NSF/ANSI, WQA, and IAPMO registries and audited quarterly. We
                   report municipal engineering data only; WaterQualityLens is not
                   a medical device.

@@ -7,11 +7,12 @@ import {
   type TocItem,
 } from "@/components/institutional/TableOfContents";
 import { CONTAMINANTS } from "@/lib/data";
+import { usesActionLevel } from "@/lib/regulatory-reference";
 import { formatUnit, formatValue } from "@/lib/format";
 import type { ContaminantDefinition } from "@/lib/types";
 
 const DESCRIPTION =
-  "A plain-language reference for the drinking water contaminants tracked under the EPA Safe Drinking Water Act — legal limits (MCL), health goals (MCLG), units, and documented health effects for lead, PFAS, arsenic, nitrate, disinfection byproducts, and more.";
+  "A plain-language reference for the drinking water contaminants tracked under the EPA Safe Drinking Water Act — legal limits (MCL), action levels, health goals (MCLG), units, and documented health effects for lead, PFAS, arsenic, nitrate, disinfection byproducts, and more.";
 
 export const metadata: Metadata = {
   title: "Drinking Water Contaminant Glossary",
@@ -32,6 +33,7 @@ function firstSentence(text?: string): string {
 }
 
 function limitText(c: ContaminantDefinition): string {
+  if (usesActionLevel(c.code)) return "Action level (90th percentile)";
   const unit = formatUnit(c.unit);
   if (c.mcl == null) return "No federal MCL";
   return `${formatValue(c.mcl, unit)} MCL`;
@@ -84,7 +86,7 @@ export default function ContaminantsIndexPage() {
             <p className="mt-5 text-lede text-ink-600 dark:text-ink-300">
               A plain-language reference for the contaminants regulated under the
               federal Safe Drinking Water Act. Each entry lists the contaminant&rsquo;s
-              legal limit, its health goal, the reporting unit, and what long-term
+              regulatory threshold, its health goal, the reporting unit, and what long-term
               exposure is associated with — sourced from EPA and state primacy-agency
               documentation.
             </p>

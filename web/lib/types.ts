@@ -140,6 +140,7 @@ export interface LookupResult {
   history: HistoryPoint[];
   /** The resolved system's service-area polygon, when we hold one. */
   service_boundary: Polygon | null;
+  /** Empty with a null SDWIS timestamp means coverage is unavailable. */
   active_violations: Violation[];
   recommended_filters: RecommendedFilter[];
   nitrate_warning: string | null;
@@ -150,6 +151,7 @@ export interface LookupResult {
   meta: {
     cache_hit: boolean;
     engine_version: string;
+    /** ZIP_REGISTRY identifies a candidate based on ZIP, with service unconfirmed. */
     resolution: "TEMM" | "ZIP_REGISTRY" | "NONE";
   };
 }

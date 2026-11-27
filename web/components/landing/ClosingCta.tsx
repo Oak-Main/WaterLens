@@ -21,8 +21,8 @@ export function ClosingCta() {
               <SectionHeading
                 tone="inverse"
                 align="center"
-                title="See your water’s record in under a minute"
-                lede="Enter your address to identify your utility, review what it reports, and find the exact certified filters for your contaminants. Free, and no account required."
+                title="Find official water records"
+                lede="Enter an address or ZIP code to find a potential utility and its official records."
               />
             </Reveal>
 
@@ -32,8 +32,7 @@ export function ClosingCta() {
               </div>
 
               <p className="mx-auto mt-6 max-w-xl text-center text-xs leading-relaxed text-brand-200">
-                WaterQualityLens aggregates public water-system engineering data
-                and hardware certifications. It does not diagnose exposure,
+                WaterQualityLens links to public water-system records and lists hardware certifications. It does not diagnose exposure,
                 predict health outcomes, or provide medical advice.
               </p>
             </Reveal>

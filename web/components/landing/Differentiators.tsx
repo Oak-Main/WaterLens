@@ -26,12 +26,12 @@ type Row = {
 const ROWS: Row[] = [
   {
     dimension: "Location precision",
-    ours: "Address-level utility boundaries (point-in-polygon)",
+    ours: "EPA ZIP registry with supplier confirmation on your water bill",
     others: "ZIP codes, which routinely span several different utilities",
   },
   {
     dimension: "How limits are set",
-    ours: "EPA legal limits (MCLs) shown plainly, with sample provenance",
+    ours: "EPA regulatory references and links to official water records",
     others: "Proprietary thresholds well below any regulatory standard",
   },
   {
@@ -54,7 +54,7 @@ export function Differentiators() {
           <SectionHeading
             eyebrow="Why we’re different"
             title="An auditor’s standard, not an advocacy pitch"
-            lede="Most water-quality tools are built to alarm or to sell. We report the public record against the legal standard and point you to independently verified hardware — whoever makes it. Here is how that compares to the common approaches."
+            lede="Most water-quality tools are built to alarm or to sell. We link to official water records and list independent filter certifications. Here is how that compares to the common approaches."
           />
         </Reveal>
 

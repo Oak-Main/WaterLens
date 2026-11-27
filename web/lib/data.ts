@@ -3,20 +3,16 @@ import {
   Filter,
   FilterClaim,
   NsfStandard,
-  Polygon,
-  WaterSystem,
 } from "./types";
 
 // -----------------------------------------------------------------------------
-// Curated dataset ported from the backend migrations (0002/0003) and demo seed.
-// This makes the site fully functional standalone; addresses outside the demo
-// boundaries fall back to the live EPA Envirofacts registry (see envirofacts.ts).
+// Standalone contaminant and filter references from the backend migrations.
 // -----------------------------------------------------------------------------
 
 export const CONTAMINANTS: ContaminantDefinition[] = [
-  { code: "PB90", name: "Lead", category: "Metal", mcl: 15, health_goal: 0, unit: "ug/L", priority: 1,
+  { code: "PB90", name: "Lead", category: "Metal", mcl: null, health_goal: 0, unit: "ug/L", priority: 1,
     health_effects: "Delays in physical and mental development in infants and children; kidney problems and high blood pressure in adults. No safe exposure level (MCLG = 0)." },
-  { code: "CU90", name: "Copper", category: "Metal", mcl: 1.3, health_goal: 1.3, unit: "mg/L", priority: 2,
+  { code: "CU90", name: "Copper", category: "Metal", mcl: null, health_goal: 1.3, unit: "mg/L", priority: 2,
     health_effects: "Short-term gastrointestinal distress; long-term liver or kidney damage above the action level." },
   { code: "CR6", name: "Hexavalent Chromium", category: "Metal", mcl: 10, health_goal: 0.02, unit: "ug/L", priority: 1,
     health_effects: "Known human carcinogen linked to stomach, lung, and nasal cancers with long-term ingestion. California PHG is 0.02 ug/L." },
@@ -142,77 +138,9 @@ export const FILTER_CLAIMS: FilterClaim[] = [
 
 // --- Demo systems (§16 marquee municipalities) ------------------------------
 
-export interface DemoSystem {
-  system: WaterSystem;
-  boundary: Polygon;
-  centroid: { lat: number; lon: number; radiusKm: number };
-  detections: Array<{ code: string; value: number; unit: string; sample_date: string; agency: string }>;
-  violations: Array<{
-    violation_id: string; contaminant_code: string; violation_category: string;
-    is_health_based: boolean; begin_date: string; status: string;
-  }>;
-  history: Array<{ code: string; value: number; unit: string; sample_date: string }>;
-}
-
-export const DEMO_SYSTEMS: DemoSystem[] = [
-  {
-    system: { pwsid: "MI0002360", name: "City of Flint", state: "MI", county: "Genesee", population_served: 95000, pws_type: "CWS", primary_source: "SW" },
-    boundary: { rings: [[[-83.78, 42.95], [-83.6, 42.95], [-83.6, 43.08], [-83.78, 43.08], [-83.78, 42.95]]] },
-    centroid: { lat: 43.0125, lon: -83.6875, radiusKm: 12 },
-    detections: [
-      { code: "PB90", value: 27, unit: "ug/L", sample_date: "2026-05-15", agency: "MI EGLE" },
-      { code: "CU90", value: 1.1, unit: "mg/L", sample_date: "2026-05-15", agency: "MI EGLE" },
-      { code: "2950", value: 62, unit: "ug/L", sample_date: "2026-04-10", agency: "MI EGLE" },
-    ],
-    violations: [
-      { violation_id: "MI-2026-0012", contaminant_code: "PB90", violation_category: "MCL", is_health_based: true, begin_date: "2026-05-20", status: "Unaddressed" },
-    ],
-    history: [
-      { code: "PB90", value: 21, unit: "ug/L", sample_date: "2025-11-01" },
-      { code: "PB90", value: 24, unit: "ug/L", sample_date: "2026-02-01" },
-      { code: "PB90", value: 27, unit: "ug/L", sample_date: "2026-05-15" },
-    ],
-  },
-  {
-    system: { pwsid: "NJ0714001", name: "Newark Water Department", state: "NJ", county: "Essex", population_served: 285000, pws_type: "CWS", primary_source: "SW" },
-    boundary: { rings: [[[-74.25, 40.68], [-74.1, 40.68], [-74.1, 40.79], [-74.25, 40.79], [-74.25, 40.68]]] },
-    centroid: { lat: 40.7357, lon: -74.1724, radiusKm: 10 },
-    detections: [
-      { code: "PB90", value: 48, unit: "ug/L", sample_date: "2026-06-01", agency: "NJ DEP" },
-      { code: "PFOA", value: 9, unit: "ng/L", sample_date: "2026-06-01", agency: "NJ DEP" },
-      { code: "CR6", value: 6, unit: "ug/L", sample_date: "2026-06-01", agency: "NJ DEP" },
-    ],
-    violations: [
-      { violation_id: "NJ-2026-0044", contaminant_code: "PB90", violation_category: "MCL", is_health_based: true, begin_date: "2026-06-05", status: "Unaddressed" },
-      { violation_id: "NJ-2026-0045", contaminant_code: "PFOA", violation_category: "MCL", is_health_based: true, begin_date: "2026-06-05", status: "Unaddressed" },
-    ],
-    history: [
-      { code: "PB90", value: 52, unit: "ug/L", sample_date: "2025-12-01" },
-      { code: "PB90", value: 50, unit: "ug/L", sample_date: "2026-03-01" },
-      { code: "PB90", value: 48, unit: "ug/L", sample_date: "2026-06-01" },
-      { code: "PFOA", value: 11, unit: "ng/L", sample_date: "2025-12-01" },
-      { code: "PFOA", value: 9, unit: "ng/L", sample_date: "2026-06-01" },
-    ],
-  },
-  {
-    system: { pwsid: "TX0610001", name: "Clear Springs Water District", state: "TX", county: "Travis", population_served: 42000, pws_type: "CWS", primary_source: "GW" },
-    boundary: { rings: [[[-97.83, 30.2], [-97.66, 30.2], [-97.66, 30.34], [-97.83, 30.34], [-97.83, 30.2]]] },
-    centroid: { lat: 30.2672, lon: -97.7431, radiusKm: 15 },
-    detections: [
-      { code: "1040", value: 3.2, unit: "mg/L", sample_date: "2026-05-20", agency: "TCEQ" },
-    ],
-    violations: [],
-    history: [
-      { code: "1040", value: 3.0, unit: "mg/L", sample_date: "2025-12-01" },
-      { code: "1040", value: 3.2, unit: "mg/L", sample_date: "2026-05-20" },
-    ],
-  },
-];
-
 // Lookups -------------------------------------------------------------------
 export const CONTAMINANT_BY_CODE = new Map(CONTAMINANTS.map((x) => [x.code, x]));
 export const FILTER_BY_ID = new Map(FILTERS.map((f) => [f.id, f]));
-export const DEMO_BY_PWSID = new Map(DEMO_SYSTEMS.map((d) => [d.system.pwsid, d]));
 
 export function contaminantName(code: string): string {
   return CONTAMINANT_BY_CODE.get(code)?.name ?? code;

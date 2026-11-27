@@ -24,7 +24,7 @@ const CONTOURS: Array<{ d: string; o: number }> = [
   { d: "M590.9,300.0C593.9,330.2 593.4,365.3 581.3,393.9C569.1,422.6 543.9,450.7 517.9,471.8C491.9,492.9 458.2,506.9 425.2,520.4C392.2,533.9 356.8,548.9 320.0,552.6C283.2,556.4 240.1,553.6 204.2,542.7C168.3,531.8 132.3,510.5 104.6,487.0C76.8,463.4 52.2,432.6 37.7,401.5C23.2,370.3 18.7,334.2 17.5,300.0C16.4,265.8 17.8,228.4 31.0,196.1C44.2,163.8 67.8,129.0 96.9,106.4C126.1,83.8 168.6,72.0 205.7,60.6C242.9,49.2 281.2,39.4 320.0,38.0C358.8,36.6 404.9,37.5 438.3,52.2C471.6,66.9 499.4,99.6 520.1,126.3C540.9,153.0 551.2,183.7 563.0,212.6C574.8,241.6 587.8,269.8 590.9,300.0Z", o: 0.18 },
 ];
 
-/** The utility's actual service-area boundary. */
+/** Illustrative service-area outline. */
 const SERVICE_POLYGON =
   "439.3,258.6 476.8,315.7 432.5,368.6 406.1,441.6 319.9,438.4 250.9,417.2 200.3,376.8 188.7,321.1 195.2,269.7 202.0,203.5 280.4,203.5 346.4,169.8 424.5,188.6";
 
@@ -73,7 +73,7 @@ export function HeroPlate() {
         viewBox="0 0 640 620"
         className="h-auto w-full"
         role="img"
-        aria-label="Schematic of a public water system service boundary: an irregular utility service-area polygon overlaid on a dashed ZIP-code footprint, with distribution mains, five compliance sampling points, and one address resolved inside the boundary by point-in-polygon test."
+        aria-label="Illustration of a water system boundary and a ZIP-code area."
       >
         <defs>
           <clipPath id="wql-plate-clip">
@@ -242,7 +242,7 @@ export function HeroPlate() {
               fontSize="10"
               letterSpacing="0.08em"
             >
-              POINT-IN-POLYGON · TIER 1
+              ILLUSTRATIVE SERVICE AREA
             </text>
           </g>
         </g>
@@ -262,28 +262,16 @@ export function HeroPlate() {
         <CornerTicks />
       </svg>
 
-      {/* Real-DOM readout chip — the actual product output, above the fold. */}
+      {/* Public report availability shown alongside the illustration. */}
       <div className="pointer-events-none absolute -bottom-4 left-0 w-[15.5rem] rounded-xl border border-ink-200 bg-white/90 p-3 shadow-lift backdrop-blur sm:-left-4 dark:border-white/15 dark:bg-brand-950/85">
         <p className="font-mono text-[0.625rem] uppercase tracking-[0.12em] text-ink-500 dark:text-brand-200/70">
-          PWS MI0002360
+          Water report
         </p>
         <p className="mt-1 flex items-baseline justify-between gap-2 text-sm font-semibold text-ink-900 dark:text-white">
-          Lead (Pb90)
-          <span className="font-mono tabular-nums">27 µg/L</span>
-        </p>
-        <div className="relative mt-2 h-1 w-full rounded-full bg-ink-100 dark:bg-white/15">
-          <div className="h-1 w-full rounded-full bg-brand-500" />
-          <div
-            className="absolute -inset-y-1 w-px bg-ink-400 dark:bg-white/50"
-            style={{ left: "55.5%" }}
-          />
-        </div>
-        <p className="mt-1.5 flex justify-between font-mono text-[0.625rem] text-ink-500 dark:text-brand-200/70">
-          <span>180% of MCL</span>
-          <span>15 MCL</span>
+          Verified records unavailable
         </p>
         <p className="mt-2 border-t border-ink-100 pt-2 text-[0.625rem] text-ink-500 dark:border-white/10 dark:text-brand-200/70">
-          Sampled 2026-05-15 · EPA SDWIS
+          See EPA and utility records
         </p>
       </div>
     </div>

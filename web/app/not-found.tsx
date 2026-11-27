@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button, Card, Container, Section } from "@/components/ui";
 import { WaveDivider } from "@/components/graphics/WaveDivider";
-import { CONTAMINANTS, DEMO_SYSTEMS, FILTERS } from "@/lib/data";
+import { CONTAMINANTS, FILTERS } from "@/lib/data";
+
+import { PUBLIC_WATER_SYSTEMS } from "@/lib/public-water-systems";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -31,10 +33,10 @@ const references = [
   {
     href: "/pws",
     title: "Water systems directory",
-    count: DEMO_SYSTEMS.length,
+    count: PUBLIC_WATER_SYSTEMS.length,
     unit: "public water systems",
     description:
-      "Every system with a published record — PWSID, county, population served, and reported exceedances.",
+      "System identifiers and links to official water quality records.",
   },
 ];
 

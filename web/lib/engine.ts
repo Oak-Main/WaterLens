@@ -1,25 +1,18 @@
 import {
   HEALTH_STANDARDS,
-  MatchTier,
   MAX_RECOMMENDATIONS,
-  TIER_CONFIDENCE,
-  TIER_LABEL,
 } from "./constants";
 import {
   CONTAMINANT_BY_CODE,
-  DEMO_SYSTEMS,
   FILTERS,
   FILTER_CLAIMS,
 } from "./data";
-import { boundingBox, haversineKm, inBoundingBox, pointInPolygon } from "./geo";
 import {
-  Coordinate,
   Detection,
   DwellingType,
   FormFactor,
   NsfStandard,
   RecommendedFilter,
-  SpatialMatch,
 } from "./types";
 
 const HEALTH = new Set<string>(HEALTH_STANDARDS);
@@ -54,48 +47,6 @@ export function buildDetection(row: {
     sampling_agency: row.agency ?? null,
     source: row.source ?? "SDWIS",
     health_effects: def.health_effects,
-  };
-}
-
-// --- TEMM spatial resolution (against bundled demo boundaries) --------------
-
-export function resolveSpatial(point: Coordinate): SpatialMatch {
-  // Tier 1 — explicit polygon.
-  for (const d of DEMO_SYSTEMS) {
-    if (
-      inBoundingBox(point, boundingBox(d.boundary)) &&
-      pointInPolygon(point, d.boundary)
-    ) {
-      return build(d.system.pwsid, MatchTier.EXPLICIT);
-    }
-  }
-  // Tier 3 — nearest modeled centroid within radius (Tier 2 proxy handled by
-  // the ZIP registry path upstream; bundled data has explicit polygons only).
-  let best: { pwsid: string; d: number } | null = null;
-  for (const d of DEMO_SYSTEMS) {
-    const dist = haversineKm(point, { lat: d.centroid.lat, lon: d.centroid.lon });
-    if (dist < d.centroid.radiusKm && (!best || dist < best.d)) {
-      best = { pwsid: d.system.pwsid, d: dist };
-    }
-  }
-  if (best) return build(best.pwsid, MatchTier.MODELED, Number(best.d.toFixed(3)));
-  return {
-    pwsid: null,
-    tier: MatchTier.NONE,
-    confidence: 0,
-    tierLabel: TIER_LABEL[MatchTier.NONE],
-    requiresLabTestWarning: true,
-  };
-}
-
-function build(pwsid: string, tier: MatchTier, distanceKm?: number): SpatialMatch {
-  return {
-    pwsid,
-    tier,
-    confidence: TIER_CONFIDENCE[tier],
-    tierLabel: TIER_LABEL[tier],
-    distanceKm,
-    requiresLabTestWarning: tier === MatchTier.MODELED,
   };
 }
 

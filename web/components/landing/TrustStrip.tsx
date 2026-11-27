@@ -75,13 +75,13 @@ function ScaleIcon() {
 const SIGNALS: { icon: ReactNode; label: string; vintage: string }[] = [
   {
     icon: <DatabaseIcon />,
-    label: "EPA SDWIS data",
-    vintage: "Envirofacts API · weekly refresh",
+    label: "EPA system registry",
+    vintage: "EPA ECHO Drinking Water System Search",
   },
   {
     icon: <BoundaryIcon />,
-    label: "TEMM address-level boundaries",
-    vintage: "EPA polygons, July 2024 · TEMM layers",
+    label: "ZIP-based utility candidates",
+    vintage: "Confirm the utility on your water bill",
   },
   {
     icon: <BadgeCheckIcon />,
