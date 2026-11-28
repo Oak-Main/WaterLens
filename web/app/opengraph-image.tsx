@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
 export const alt =
-  "WaterQualityLens — know exactly what's in your tap water, and precisely what removes it.";
+  "WaterQualityLens — public water system records and official reports.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -95,7 +95,7 @@ export default function OpengraphImage() {
                 letterSpacing: "-0.028em",
               }}
             >
-              Know exactly what&apos;s in your tap water
+              Find public water system records
             </div>
             <div
               style={{
@@ -107,7 +107,7 @@ export default function OpengraphImage() {
                 letterSpacing: "-0.02em",
               }}
             >
-              and precisely what removes it.
+              and official water quality reports.
             </div>
           </div>
 
@@ -124,7 +124,7 @@ export default function OpengraphImage() {
           >
             <span>EPA SDWIS</span>
             <span style={{ color: "rgba(255,255,255,0.3)" }}>·</span>
-            <span>TEMM service boundaries</span>
+            <span>Official utility records</span>
             <span style={{ color: "rgba(255,255,255,0.3)" }}>·</span>
             <span>NSF/ANSI certified filters</span>
           </div>

@@ -136,10 +136,18 @@ try {
   const { html: sitemap } = await getHtml("/sitemap.xml");
   assert.doesNotMatch(sitemap, /<loc>[^<]*\/pws\/[^<]+<\/loc>/);
   assert.match(sitemap, /<loc>https:\/\/www\.taptoglass\.com\/pws<\/loc>/);
+  const directoryEntry = [...sitemap.matchAll(/<url>[\s\S]*?<\/url>/g)].find(
+    ([entry]) => entry.includes("<loc>https://www.taptoglass.com/pws</loc>"),
+  );
+  assert.ok(directoryEntry);
+  assert.doesNotMatch(directoryEntry[0], /<lastmod>/i);
 
   const { html: home } = await getHtml("/");
   assert.match(home, /Verified records unavailable/);
   assert.doesNotMatch(home, /MI0002360|180% of MCL|27 µg\/L|data.*weekly refresh/i);
+  assert.doesNotMatch(home, /TEMM service boundaries|address-level tap water quality intelligence/i);
+  const { html: methodology } = await getHtml("/methodology");
+  assert.doesNotMatch(methodology, /Point-in-polygon resolution|TEMM service boundaries/i);
 
   for (const code of ["PB90", "CU90"]) {
     const path = "/contaminants/" + code;

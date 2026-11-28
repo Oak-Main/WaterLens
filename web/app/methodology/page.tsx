@@ -143,19 +143,17 @@ export default function MethodologyPage() {
           <div className="mt-6 max-w-3xl animate-fade-up">
             <Eyebrow>Methodology</Eyebrow>
             <h1 className="text-display-1 text-ink-900 dark:text-white">
-              How we turn a street address into a defensible answer
+              How the water system lookup works
             </h1>
             <p className="mt-6 max-w-2xl text-lede text-ink-600 dark:text-ink-300">
-              WaterQualityLens is an auditor, not an advocate. Every result is
-              produced by the same deterministic pipeline: resolve the water
-              system candidate, find its public record, and look up hardware that is
-              independently certified for the specific hazards found. This page
-              documents each step and the confidence we attach to it.
+              The lookup uses EPA ZIP records to identify possible water systems.
+              The directory links to official records. The certification registry
+              provides a reference by filter and contaminant.
             </p>
             <div className="mt-8 flex flex-wrap gap-2.5">
-              <Badge tone="brand">Point-in-polygon resolution</Badge>
-              <Badge tone="verdant">Full data provenance</Badge>
-              <Badge tone="ink">Constrained set-cover matching</Badge>
+              <Badge tone="brand">EPA ZIP registry</Badge>
+              <Badge tone="verdant">Official record links</Badge>
+              <Badge tone="ink">Filter certification reference</Badge>
             </div>
           </div>
         </Container>

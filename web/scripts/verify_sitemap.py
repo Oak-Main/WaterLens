@@ -54,18 +54,19 @@ def verify(build_dir, site_url):
         require(entry.tag == NS + 'url', 'invalid sitemap entry element')
         locs = entry.findall(NS + 'loc')
         dates = entry.findall(NS + 'lastmod')
-        require(len(locs) == len(dates) == 1, 'each URL requires one loc and lastmod')
+        require(len(locs) == 1 and len(dates) <= 1, 'each URL requires one loc and at most one lastmod')
         loc = (locs[0].text or '').strip()
-        lastmod = (dates[0].text or '').strip()
-        require(re.fullmatch(r'\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))?', lastmod),
-                'lastmod must be a W3C date or timestamp: ' + loc)
-        try:
-            if 'T' in lastmod:
-                datetime.fromisoformat(lastmod.replace('Z', '+00:00'))
-            else:
-                date.fromisoformat(lastmod)
-        except ValueError:
-            raise ValueError('invalid calendar date: ' + lastmod)
+        if dates:
+            lastmod = (dates[0].text or '').strip()
+            require(re.fullmatch(r'\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))?', lastmod),
+                    'lastmod must be a W3C date or timestamp: ' + loc)
+            try:
+                if 'T' in lastmod:
+                    datetime.fromisoformat(lastmod.replace('Z', '+00:00'))
+                else:
+                    date.fromisoformat(lastmod)
+            except ValueError:
+                raise ValueError('invalid calendar date: ' + lastmod)
         route = route_for(loc)
         require(route not in sitemap_routes, 'duplicate sitemap route: ' + route)
         sitemap_routes[route] = loc

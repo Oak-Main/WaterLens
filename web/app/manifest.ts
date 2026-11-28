@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "WaterQualityLens — address-level tap water quality intelligence",
+    name: "WaterQualityLens — public water system records",
     short_name: "WaterQualityLens",
     description:
-      "Identify the public water system serving a US address, review the contaminants it reports against federal limits with full provenance, and match the retail filters independently NSF/ANSI-certified to remove them.",
+      "Look up possible water systems by ZIP code, find official reports, and browse independent filter certifications.",
     start_url: "/",
     display: "standalone",
     background_color: "#f6f7f9",

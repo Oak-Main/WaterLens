@@ -31,7 +31,7 @@ const mono = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "WaterQualityLens — Address-level tap water quality intelligence",
+    default: "WaterQualityLens — Public water system records",
     template: "%s · WaterQualityLens",
   },
   description: SITE_DESC,
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    title: "WaterQualityLens — Address-level tap water quality intelligence",
+    title: "WaterQualityLens — Public water system records",
     description: SITE_DESC,
   },
   twitter: { card: "summary_large_image", title: SITE_NAME, description: SITE_DESC },

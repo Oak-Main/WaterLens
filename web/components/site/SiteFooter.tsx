@@ -26,7 +26,7 @@ const groups = [
     title: "Data sources",
     links: [
       { href: "/methodology#sources", label: "EPA SDWIS / Envirofacts" },
-      { href: "/methodology#sources", label: "TEMM service boundaries" },
+      { href: "/pws", label: "Official utility records" },
       { href: "/registry", label: "NSF / WQA certifications" },
     ],
   },
@@ -40,8 +40,7 @@ export function SiteFooter() {
           <div>
             <Logo />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-600 dark:text-ink-300">
-              Address-level water quality intelligence — objective municipal data
-              matched to independently certified filtration.
+              Official water system records and independent filter certification references.
             </p>
             <Button href="/#lookup" variant="secondary" size="sm" className="mt-5">
               Check my water

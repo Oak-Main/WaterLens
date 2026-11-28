@@ -8,13 +8,13 @@ import { EducationTeaser } from "@/components/landing/EducationTeaser";
 import { ClosingCta } from "@/components/landing/ClosingCta";
 
 export const metadata: Metadata = {
-  title: "WaterQualityLens — What’s in your tap water, and what removes it",
+  title: "WaterQualityLens — Public water system records",
   description:
     "Search EPA ZIP coverage, follow links to official water records, and browse independent filter certifications.",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    title: "WaterQualityLens — Address-level tap water quality intelligence",
+    title: "WaterQualityLens — Public water system records",
     description:
       "Find a potential public water system, official water records, and independent filter certifications.",
     url: "/",
