@@ -259,9 +259,9 @@ export function CoverageStats() {
               />
               <Stat
                 tone="inverse"
-                value="3-tier"
-                label="Address-mapping confidence"
-                sub="Explicit, matched or modeled — always labeled"
+                value={`${RAILS.length}`}
+                label="Certification standards listed"
+                sub="Includes health, aesthetic, and materials standards"
               />
             </div>
           </Reveal>

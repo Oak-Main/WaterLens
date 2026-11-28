@@ -147,7 +147,7 @@ try {
   assert.match(home, /Verified records unavailable/);
   assert.match(home, /The lookup uses your ZIP code, which can have several suppliers/);
   assert.doesNotMatch(home, /MI0002360|180% of MCL|27 µg\/L|data.*weekly refresh/i);
-  assert.doesNotMatch(home, /TEMM service boundaries|address-level tap water quality intelligence|location precision|grade each address match|ZIP 48503|illustrative service area|wql-mains|wql-ping/i);
+  assert.doesNotMatch(home, /TEMM service boundaries|address-level tap water quality intelligence|location precision|grade each address match|address-mapping confidence|3-tier|ZIP 48503|illustrative service area|wql-mains|wql-ping/i);
   const { html: methodology } = await getHtml("/methodology");
   assert.doesNotMatch(methodology, /Point-in-polygon resolution|TEMM service boundaries/i);
 
