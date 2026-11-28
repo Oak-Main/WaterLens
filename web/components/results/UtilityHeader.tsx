@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Pill } from "@/components/ui";
 import { formatDate, slugPwsid } from "@/lib/format";
+import { epaWaterSystemUrl, publicWaterSystem } from "@/lib/public-water-systems";
 import type { WaterSystem } from "@/lib/types";
 
 function primarySourceLabel(code: string | null): string | null {
@@ -36,12 +37,12 @@ export function UtilityHeader({
     .filter(Boolean)
     .join(", ");
   const source = primarySourceLabel(utility.primary_source);
-  const asOf = freshness.sdwis_fetched_at ?? freshness.generated_at;
+  const profile = publicWaterSystem(utility.pwsid);
 
   return (
     <header className="animate-fade-up" aria-labelledby="utility-heading">
       <p className="text-eyebrow uppercase text-brand-600 dark:text-brand-300">
-        Supplying water system
+        Potential water system
       </p>
       <div className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-2">
         {/* The page <h1> is the verdict banner; this is the section heading
@@ -50,9 +51,9 @@ export function UtilityHeader({
           {utility.name}
         </h2>
         <Link
-          href={`/pws/${slugPwsid(utility.pwsid)}`}
+          href={profile ? `/pws/${slugPwsid(utility.pwsid)}` : epaWaterSystemUrl(utility.pwsid)}
           className="inline-flex rounded-md"
-          aria-label={`View full profile for water system ${utility.pwsid}`}
+          aria-label={`View information for water system ${utility.pwsid}`}
         >
           <Pill tone="brand">{utility.pwsid}</Pill>
         </Link>
@@ -66,7 +67,9 @@ export function UtilityHeader({
           </Field>
         ) : null}
         {source ? <Field label="Primary source">{source}</Field> : null}
-        <Field label="Utility data as of">{formatDate(asOf)}</Field>
+        {freshness.sdwis_fetched_at ? (
+          <Field label="Utility data as of">{formatDate(freshness.sdwis_fetched_at)}</Field>
+        ) : <Field label="Identity source">EPA ECHO ZIP registry</Field>}
       </dl>
     </header>
   );

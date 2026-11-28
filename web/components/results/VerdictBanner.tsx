@@ -99,14 +99,14 @@ export function VerdictBanner({
           id="verdict-heading"
           className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl"
         >
-          {noSamples ? "Registry record found — no sample results published" : title}
+          {noSamples ? "Verified water quality records unavailable" : title}
         </h1>
         <p className="mt-3 max-w-2xl text-base leading-relaxed text-brand-100">
           {noSamples ? (
             <>
-              We hold this system&rsquo;s EPA registry record and its violation
-              history for <span className="font-medium text-white">{address}</span>, but
-              not its sample-level laboratory results.
+              The EPA ZIP registry returned a potential system for{" "}
+              <span className="font-medium text-white">{address}</span>.
+              Tap to Glass has no verified measurements or violation records to display.
             </>
           ) : kind === "clear" ? (
             <>

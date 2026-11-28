@@ -23,11 +23,9 @@ import {
   CERTIFICATIONS,
   CONTAMINANTS,
   CONTAMINANT_BY_CODE,
-  DEMO_SYSTEMS,
   FILTER_BY_ID,
   FILTER_CLAIMS,
 } from "@/lib/data";
-import { demoProfile } from "@/lib/lookup";
 import {
   HEALTH_STANDARDS,
   NITRATE_CODES,
@@ -36,21 +34,16 @@ import {
 } from "@/lib/constants";
 import {
   FORM_FACTOR_LABEL,
-  formatDate,
-  formatRatio,
   formatUnit,
   formatValue,
-  severityChipClass,
-  severityLabel,
   standardLabel,
   usd,
 } from "@/lib/format";
+import { LEAD_AND_COPPER_RULE, usesActionLevel } from "@/lib/regulatory-reference";
 import type {
   ContaminantDefinition,
-  Detection,
   Filter,
   NsfStandard,
-  WaterSystem,
 } from "@/lib/types";
 
 export const dynamicParams = false;
@@ -122,28 +115,6 @@ function claimCountsByStandard(code: string): Map<NsfStandard, number> {
   return new Map([...byStandard].map(([s, ids]) => [s, ids.size]));
 }
 
-interface SystemMention {
-  system: WaterSystem;
-  detection: Detection;
-}
-
-/** Demo-profile systems whose reported sample set contains this contaminant. */
-function systemsReporting(code: string): SystemMention[] {
-  const out: SystemMention[] = [];
-  for (const demo of DEMO_SYSTEMS) {
-    const profile = demoProfile(demo.system.pwsid);
-    if (!profile) continue;
-    const detection = profile.detections.find((d) => d.code === code);
-    if (!detection) continue;
-    out.push({ system: profile.utility, detection });
-  }
-  return out.sort(
-    (a, b) =>
-      Number(b.detection.exceeds_mcl) - Number(a.detection.exceeds_mcl) ||
-      (b.detection.mcl_ratio ?? 0) - (a.detection.mcl_ratio ?? 0)
-  );
-}
-
 function unitLabel(c: ContaminantDefinition): string {
   return formatUnit(c.unit);
 }
@@ -169,8 +140,10 @@ export async function generateMetadata(
     return { title: "Contaminant not found", robots: { index: false, follow: true } };
   }
   const unit = unitLabel(c);
-  const limit =
-    c.mcl != null ? `federal MCL ${formatValue(c.mcl, unit)}` : "no federal MCL set";
+  const actionLevel = usesActionLevel(c.code);
+  const limit = actionLevel
+    ? "an EPA action level for 90th-percentile tap monitoring"
+    : c.mcl != null ? `federal MCL ${formatValue(c.mcl, unit)}` : "no federal MCL set";
   const description = `${c.name} in drinking water — ${limit}, health goal ${
     c.health_goal === 0 ? "0 (no safe level)" : c.health_goal != null ? formatValue(c.health_goal, unit) : "not set"
   }, and the NSF/ANSI-certified filters independently verified to reduce it.`;
@@ -181,7 +154,7 @@ export async function generateMetadata(
   // filter sections ground every term. `absolute` keeps the full string in
   // the SERP budget instead of stacking the layout brand suffix.
   return {
-    title: { absolute: `${c.name} in Drinking Water — MCL & Certified Filters` },
+    title: { absolute: `${c.name} in Drinking Water — ${actionLevel ? "Action Level" : "MCL"} & Certified Filters` },
     description,
     alternates: { canonical: `/contaminants/${c.code}` },
     openGraph: {
@@ -201,6 +174,25 @@ function RegulationCopy({ c }: { c: ContaminantDefinition }) {
   const goal = goalValue(c);
   const hasGap = c.mcl != null && c.health_goal != null && c.mcl !== c.health_goal;
   const paragraphs: ReactNode[] = [];
+
+  if (usesActionLevel(c.code)) {
+    return (
+      <>
+        <p>
+          The <a href={LEAD_AND_COPPER_RULE}>EPA Lead and Copper Rule</a> regulates{" "}
+          {c.name.toLowerCase()} through a treatment technique for corrosion control.
+          The action level applies to the water system&rsquo;s 90th-percentile tap
+          monitoring result. An exceedance triggers requirements under the rule.
+        </p>
+        <p>
+          Use the rule in effect for the jurisdiction and monitoring period to
+          interpret a system result. An individual tap sample measures conditions
+          at that tap. The separate federal health goal is <code>{goal}</code> and
+          is non-enforceable.
+        </p>
+      </>
+    );
+  }
 
   if (c.mcl == null) {
     paragraphs.push(
@@ -308,9 +300,9 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
   const unit = unitLabel(c);
   const verified = verifiedFiltersFor(c.code);
   const hardwarePaid = verified.some(({ filter }) => offerFor(filter)?.paid);
+  const actionLevel = usesActionLevel(c.code);
   const isNitrate = NITRATE_CODES.has(c.code);
   const counts = claimCountsByStandard(c.code);
-  const systems = systemsReporting(c.code);
 
   const standardsShown: NsfStandard[] = [
     ...(HEALTH_STANDARDS as readonly NsfStandard[]),
@@ -341,7 +333,7 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
             {c.health_effects ? (
               <div className="mt-5 border-l-2 border-ink-200 pl-4 dark:border-white/15">
                 <p className="text-xs font-medium uppercase tracking-wide text-ink-500 dark:text-ink-400">
-                  <Tooltip content="The health basis on which the EPA sets this contaminant's legal limit. Reported verbatim from the regulatory record — it is not a diagnosis or a prediction about any individual.">
+                  <Tooltip content="The health basis on which the EPA sets this contaminant's drinking water standard. Reported verbatim from the regulatory record — it is not a diagnosis or a prediction about any individual.">
                     EPA health-effects basis
                   </Tooltip>
                 </p>
@@ -354,12 +346,12 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
 
           <dl className="mt-10 grid grid-cols-2 gap-6 rounded-2xl bg-surface-raised p-6 shadow-card ring-1 ring-ink-900/[0.055] sm:grid-cols-4 sm:p-8 dark:ring-white/10">
             <div>
-              <dt className="sr-only">Maximum contaminant level</dt>
+              <dt className="sr-only">{actionLevel ? "Regulatory threshold" : "Maximum contaminant level"}</dt>
               <dd>
                 <Stat
-                  value={c.mcl != null ? formatValue(c.mcl, unit) : "None"}
-                  label="Legal MCL"
-                  sub="Enforceable federal limit"
+                  value={actionLevel ? "Action level" : limitValue(c) ?? "None"}
+                  label={actionLevel ? "Regulatory threshold" : "Legal MCL"}
+                  sub={actionLevel ? "90th-percentile tap monitoring" : "Enforceable federal limit"}
                 />
               </dd>
             </div>
@@ -416,7 +408,9 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
           <SectionHeading
             eyebrow="Regulatory basis"
             title={`How ${c.name} is regulated`}
-            lede="What the enforceable limit actually obliges a utility to do, and how it differs from the health-based goal it is measured against."
+            lede={actionLevel
+              ? "How the 90th-percentile tap monitoring result can trigger requirements under the EPA Lead and Copper Rule, and how the action level differs from the health goal."
+              : "What the enforceable limit actually obliges a utility to do, and how it differs from the health-based goal it is measured against."}
             id="regulation-heading"
           />
 
@@ -431,7 +425,9 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
               </h3>
               <dl className="mt-4 space-y-3 text-sm">
                 {[
-                  ["Enforceable limit (MCL)", limitValue(c) ?? "None set federally"],
+                  actionLevel
+                    ? ["Regulatory threshold", "Action level (90th percentile)"]
+                    : ["Enforceable limit (MCL)", limitValue(c) ?? "None set federally"],
                   ["Health goal (MCLG)", goalValue(c) ?? "Not set"],
                   ["Reporting unit", unit],
                   ["Category", c.category],
@@ -585,72 +581,6 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
           </p>
         </Container>
       </Section>
-
-      {/* (c) Systems reporting it ------------------------------------------ */}
-      {systems.length > 0 ? (
-        <Section id="systems">
-          <Container>
-            <SectionHeading
-              eyebrow="Entity graph"
-              title={`Systems reporting ${c.name}`}
-              lede={`Water systems in our coverage whose most recent published sample set includes ${c.name}. Each value carries its sample date and the agency that reported it.`}
-              id="systems-heading"
-            />
-
-            <ul className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {systems.map(({ system, detection }) => {
-                const ratio = formatRatio(detection.mcl_ratio);
-                return (
-                  <Card as="li" key={system.pwsid} interactive className="group">
-                    <Link
-                      href={`/pws/${system.pwsid}`}
-                      className="flex h-full flex-col rounded-2xl p-6 outline-none"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="text-title-2 text-ink-900 group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-200">
-                          {system.name}
-                        </h3>
-                        <Pill tone="ink">{system.pwsid}</Pill>
-                      </div>
-                      <p className="mt-1 text-sm text-ink-500 dark:text-ink-400">
-                        {[system.county ? `${system.county} County` : null, system.state]
-                          .filter(Boolean)
-                          .join(", ")}
-                      </p>
-
-                      <p className="mt-4 flex items-baseline gap-2">
-                        <span className="font-mono text-2xl font-semibold tabular-nums text-ink-900 dark:text-white">
-                          {formatValue(detection.value, formatUnit(detection.unit))}
-                        </span>
-                        {ratio && detection.exceeds_mcl ? (
-                          <span className="text-sm text-ink-500 dark:text-ink-400">
-                            {ratio} the federal limit
-                          </span>
-                        ) : null}
-                      </p>
-
-                      <div className="mt-3">
-                        <Badge className={severityChipClass(detection)}>
-                          {severityLabel(detection)}
-                        </Badge>
-                      </div>
-
-                      <p className="mt-4 flex-1 text-xs leading-relaxed text-ink-500 dark:text-ink-400">
-                        Sampled {formatDate(detection.sample_date)} · Reported by{" "}
-                        {detection.sampling_agency ?? "the reporting utility"} · Source{" "}
-                        {detection.source}
-                      </p>
-                      <span className="mt-4 text-sm font-medium text-brand-700 dark:text-brand-200">
-                        View the full system record →
-                      </span>
-                    </Link>
-                  </Card>
-                );
-              })}
-            </ul>
-          </Container>
-        </Section>
-      ) : null}
 
       {/* Hardware — kept below the objective record ---------------------- */}
       <Section id="hardware" tone="sunken">

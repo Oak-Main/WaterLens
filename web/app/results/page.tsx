@@ -42,9 +42,7 @@ export async function generateMetadata(
   const title = address ? `Water report for ${address}` : "Water report";
   return {
     title,
-    description: address
-      ? `The public water system serving ${address}, the contaminants it reports against federal limits, and the filters independently certified to remove them.`
-      : undefined,
+    description: "Look up a potential water system and find official records.",
     // The results page is dynamic and address-specific; keep it out of the index.
     robots: { index: false, follow: false },
   };
@@ -70,9 +68,7 @@ export default async function ResultsPage(
             </p>
             <h1 className="mt-3 text-display-2">Enter an address to see its water report</h1>
             <p className="mx-auto mt-4 max-w-xl text-lede text-ink-600 dark:text-ink-300">
-              We identify the public water system that supplies a given address, the
-              contaminants it reports against federal limits, and the filters independently
-              certified to remove them.
+              Lookup can suggest a system where the EPA ZIP registry has coverage. The water systems directory links to official records.
             </p>
           </div>
           <div className="mx-auto mt-8 max-w-2xl">
@@ -105,7 +101,7 @@ export default async function ResultsPage(
             </div>
           </div>
           <div className="space-y-10">
-            <EmptyState variant="no-match" />
+            <EmptyState variant="no-match" registryStatus={result.meta.registry_status} />
             <Disclaimers disclaimers={result.disclaimers} />
           </div>
         </Container>
@@ -154,7 +150,6 @@ export default async function ResultsPage(
                 <ConfidenceBanner
                   match={result.match}
                   multiSystemWarning={result.multi_system_warning}
-                  multiSystemCount={result.multi_system_count}
                 />
               </div>
               {result.service_boundary ? (
@@ -180,16 +175,19 @@ export default async function ResultsPage(
               <EmptyState
                 variant={noSamples ? "no-samples" : "clean"}
                 utilityName={result.utility.name}
+                pwsid={result.utility.pwsid}
               />
             )}
 
-            <ViolationsList violations={result.active_violations} />
+            {!noSamples ? <ViolationsList violations={result.active_violations} /> : null}
 
             {/* Commercial hardware always follows the objective data (§13). */}
-            <FilterCarousel
-              filters={result.recommended_filters}
-              dwelling={result.query.dwelling_type}
-            />
+            {!noSamples ? (
+              <FilterCarousel
+                filters={result.recommended_filters}
+                dwelling={result.query.dwelling_type}
+              />
+            ) : null}
 
             <Disclaimers disclaimers={result.disclaimers} />
           </div>

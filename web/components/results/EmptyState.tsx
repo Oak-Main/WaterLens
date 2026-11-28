@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui";
 import { LAB_TEST_OFFER } from "@/lib/offers";
+import { epaWaterSystemUrl } from "@/lib/public-water-systems";
+import type { LookupResult } from "@/lib/types";
 
 const LAB_TEST = LAB_TEST_OFFER;
 
@@ -43,12 +45,23 @@ function DocumentIcon() {
  */
 export type EmptyVariant = "clean" | "no-samples" | "no-match";
 
+type RegistryStatus = LookupResult["meta"]["registry_status"];
+const coverageNotes: Partial<Record<RegistryStatus, string>> = {
+  no_candidates: "EPA ECHO returned no active community water systems for this ZIP.",
+  unverified: "EPA ZIP coverage for this lookup is unverified.",
+  unavailable: "EPA ZIP coverage is temporarily unavailable.",
+};
+
 export function EmptyState({
   variant,
   utilityName,
+  pwsid,
+  registryStatus = "not_queried",
 }: {
   variant: EmptyVariant;
   utilityName?: string | null;
+  pwsid?: string;
+  registryStatus?: RegistryStatus;
 }) {
   const tone =
     variant === "clean"
@@ -77,7 +90,7 @@ export function EmptyState({
         {variant === "clean"
           ? "No reported contaminant exceedances"
           : variant === "no-samples"
-            ? "No sample-level results published for this system"
+            ? "Measurements and violation history unavailable"
             : "We couldn't confirm your water system"}
       </h2>
 
@@ -90,17 +103,13 @@ export function EmptyState({
           </>
         ) : variant === "no-samples" ? (
           <>
-            We have {name}&rsquo;s EPA registry record and its violation history, but not its
-            sample-level laboratory results. That is a gap in what has been published — it is not
-            a finding that the water is clean, and no conclusion either way should be drawn from
-            this screen.
+            Check the official EPA system record for {name}&rsquo;s monitoring and compliance history.
           </>
         ) : (
           <>
-            We couldn&rsquo;t match this address to a public water system in our coverage or the
-            EPA registry. Confirm the utility name printed on your most recent water bill, then
-            search again. A point-of-use lab test is the most reliable way to learn what is in
-            your tap.
+            {coverageNotes[registryStatus] ?? "EPA ZIP coverage varies."}{" "}
+            Check the utility name on your water bill,
+            browse the water systems directory, or consult the EPA service-area map.
           </>
         )}
       </p>
@@ -114,13 +123,19 @@ export function EmptyState({
       ) : null}
 
       <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-        <Button href={LAB_TEST.href} rel={LAB_TEST.rel} external aria-label="Order a Tap Score lab test (opens in a new tab)">
-          Order a Tap Score lab test
-        </Button>
-        {variant === "no-match" ? (
-          <Button href="/" variant="secondary">
-            Search a different address
+        {variant === "no-samples" && pwsid ? (
+          <Button href={epaWaterSystemUrl(pwsid)}>EPA system record</Button>
+        ) : (
+          <Button href={LAB_TEST.href} rel={LAB_TEST.rel} external aria-label="Order a Tap Score lab test (opens in a new tab)">
+            Order a Tap Score lab test
           </Button>
+        )}
+        {variant === "no-match" ? (
+          <>
+            <Button href="/pws" variant="secondary">Water systems directory</Button>
+            <Button href="https://gispub.epa.gov/serviceareas" variant="secondary">EPA service-area map</Button>
+            <Button href="/" variant="secondary">Search a different address</Button>
+          </>
         ) : null}
       </div>
     </div>

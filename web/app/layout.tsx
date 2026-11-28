@@ -6,7 +6,7 @@ import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 const SITE_DESC =
-  "Enter your address to see exactly which contaminants your public water system reports — and the specific, independently NSF-certified filters proven to remove them.";
+  "Look up a potential water system, find official water records, and browse independent filter certifications.";
 
 // Self-hosted variable faces (files committed under app/fonts). No CDN, no
 // network at build or runtime, and the type is the same on every platform.
@@ -31,7 +31,7 @@ const mono = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "WaterQualityLens — Address-level tap water quality intelligence",
+    default: "WaterQualityLens — Public water system records",
     template: "%s · WaterQualityLens",
   },
   description: SITE_DESC,
@@ -42,13 +42,13 @@ export const metadata: Metadata = {
     "NSF 58 reverse osmosis",
     "PFAS water filter",
     "lead water filter",
-    "EPA SDWIS",
-    "water contaminants by address",
+    "EPA ECHO water system records",
+    "water system lookup by ZIP code",
   ],
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    title: "WaterQualityLens — Address-level tap water quality intelligence",
+    title: "WaterQualityLens — Public water system records",
     description: SITE_DESC,
   },
   twitter: { card: "summary_large_image", title: SITE_NAME, description: SITE_DESC },

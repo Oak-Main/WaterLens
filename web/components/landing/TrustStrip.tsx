@@ -68,30 +68,28 @@ function ScaleIcon() {
 }
 
 /**
- * Each signal carries its own data vintage. The hero no longer runs a trust row,
- * so this band is the page's only provenance surface above the fold — a bare
- * label without a vintage would be a claim rather than a citation.
+ * Each signal names its source or basis, and includes a date when supported.
  */
-const SIGNALS: { icon: ReactNode; label: string; vintage: string }[] = [
+const SIGNALS: { icon: ReactNode; label: string; detail: string }[] = [
   {
     icon: <DatabaseIcon />,
-    label: "EPA SDWIS data",
-    vintage: "Envirofacts API · weekly refresh",
+    label: "EPA system registry",
+    detail: "EPA ECHO Drinking Water System Search",
   },
   {
     icon: <BoundaryIcon />,
-    label: "TEMM address-level boundaries",
-    vintage: "EPA polygons, July 2024 · TEMM layers",
+    label: "ZIP-based utility candidates",
+    detail: "EPA ECHO ZIP associations · confirm on your water bill",
   },
   {
     icon: <BadgeCheckIcon />,
     label: "Independent NSF/ANSI verification",
-    vintage: "NSF · WQA · IAPMO · audited quarterly",
+    detail: "NSF · WQA · IAPMO · audited quarterly",
   },
   {
     icon: <ScaleIcon />,
     label: "No fear-based ratings",
-    vintage: "Federal MCLs · no proprietary scores",
+    detail: "Federal MCLs · no proprietary scores",
   },
 ];
 
@@ -120,7 +118,7 @@ export function TrustStrip() {
                     {s.label}
                   </span>
                   <span className="mt-1 block font-mono text-[11px] leading-snug text-ink-500 dark:text-ink-400">
-                    {s.vintage}
+                    {s.detail}
                   </span>
                 </span>
               </li>

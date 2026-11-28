@@ -186,17 +186,6 @@
   .stagger > *:nth-child(5) {
     animation-delay: 280ms;
   }
-
-  /* Hero plate motion. */
-  .wql-mains polyline {
-    stroke-dasharray: 3 220;
-    animation: wql-flow 9s linear infinite;
-  }
-  .wql-ping {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: wql-ping 4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-  }
 }
 
 /* ---------------------------------------------------------------------------

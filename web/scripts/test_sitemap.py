@@ -60,6 +60,16 @@ class SitemapTests(unittest.TestCase):
         self.write_sitemap()
         self.assertNotEqual(self.run_verifier().returncode, 0)
 
+    def test_directory_lastmod_is_optional(self):
+        path = self.app / 'sitemap.xml.body'
+        xml = path.read_text()
+        marker = f'<loc>{self.origin}/pws</loc>'
+        date = '<lastmod>2026-11-04T10:00:00.000Z</lastmod>'
+        path.write_text(xml.replace(marker + date, marker))
+        self.assertEqual(self.run_verifier().returncode, 0)
+        path.write_text(xml.replace(marker + date, marker + date * 2))
+        self.assertNotEqual(self.run_verifier().returncode, 0)
+
     def test_duplicate_sitemap_url_fails(self):
         self.routes.append('/about')
         self.write_sitemap()

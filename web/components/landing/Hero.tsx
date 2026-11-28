@@ -3,7 +3,7 @@ import { Container, Eyebrow } from "@/components/ui";
 import { HeroPlate } from "./HeroPlate";
 
 const TRUST_CHIPS = [
-  "EPA SDWIS enforcement data",
+  "EPA ZIP registry",
   "NSF/ANSI certified hardware only",
   "No account · no paywall",
 ];
@@ -22,22 +22,20 @@ export function Hero() {
           {/* Copy + the primary action */}
           <div className="lg:col-span-6">
             <div className="stagger">
-              <Eyebrow>Address-level water quality intelligence</Eyebrow>
+              <Eyebrow>Public water records</Eyebrow>
 
               <h1
                 id="hero-heading"
                 className="max-w-[20ch] text-display-1 text-ink-900 dark:text-white"
               >
-                Know exactly what&rsquo;s in your tap water
+                Find potential water suppliers
                 <span className="block text-brand-600 dark:text-brand-300">
-                  and precisely what removes it.
+                  and official records.
                 </span>
               </h1>
 
               <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-600 sm:mt-6 sm:text-lede dark:text-ink-300">
-                Enter your address. We identify the utility that actually serves
-                it, what it reports against federal limits, and the filters
-                certified to remove it.
+                The lookup uses your ZIP code, which can have several suppliers. EPA registry coverage varies. Check your water bill to confirm who serves your address.
               </p>
 
               <div className="glow-brand mt-6 sm:mt-8">

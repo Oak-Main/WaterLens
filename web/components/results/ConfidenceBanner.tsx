@@ -65,7 +65,7 @@ function description(tier: MatchTier): string {
     case MatchTier.EXPLICIT:
       return "This address falls inside the mapped service boundary of the water system below. This is our highest-confidence match.";
     case MatchTier.MATCHED:
-      return "We matched this address to the water system below using the utility registry for its ZIP code. Confirm the utility name on your water bill if more than one system serves your area.";
+      return "The EPA registry associates this system with the ZIP code. Check your water bill to confirm which system serves the address.";
     case MatchTier.MODELED:
       return "We could not place this address inside a mapped service boundary, so the supplying utility was estimated using a modeled radius. Treat the results below as directional.";
     default:
@@ -76,11 +76,9 @@ function description(tier: MatchTier): string {
 export function ConfidenceBanner({
   match,
   multiSystemWarning = false,
-  multiSystemCount = 0,
 }: {
   match: SpatialMatch;
   multiSystemWarning?: boolean;
-  multiSystemCount?: number;
 }) {
   const tone = tierTone(match.tier);
   const isModeled = match.tier === MatchTier.MODELED || match.tier === MatchTier.NONE;
@@ -99,7 +97,7 @@ export function ConfidenceBanner({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <h2 className={`text-title-2 ${accentText[tone]}`}>{match.tierLabel}</h2>
-            <Badge tone={tone}>{confidencePct}% confidence</Badge>
+            {match.tier !== MatchTier.MATCHED ? <Badge tone={tone}>{confidencePct}% confidence</Badge> : null}
             {match.distanceKm != null ? (
               <span className="text-xs text-ink-500 dark:text-ink-400">
                 ~{match.distanceKm.toFixed(1)} km from system center
@@ -133,11 +131,7 @@ export function ConfidenceBanner({
 
           {multiSystemWarning ? (
             <p className="mt-3 text-sm leading-relaxed text-ink-600 dark:text-ink-300">
-              <span className="font-medium text-ink-800 dark:text-ink-100">
-                {multiSystemCount > 1 ? `${multiSystemCount} water systems` : "Multiple water systems"}
-              </span>{" "}
-              are on record for this area. We are showing the largest by population served. Check the
-              utility name printed on your water bill to confirm which one supplies your home.
+              The ZIP registry returned multiple potential systems. The result shows the candidate with the largest reported population among the records retrieved.
             </p>
           ) : null}
         </div>
