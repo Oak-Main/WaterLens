@@ -68,7 +68,7 @@ export default function PwsIndexPage() {
             <Eyebrow>Directory</Eyebrow>
             <h1 className="text-display-2">Water systems</h1>
             <p className="mt-5 text-lede text-ink-600 dark:text-ink-300">
-              Find a public water system by name or EPA system ID and follow links to its official records.
+              Browse the listed public water systems and follow links to their official records.
             </p>
             <p className="mt-4 text-sm leading-relaxed text-ink-600 dark:text-ink-300">
               Where EPA ZIP coverage is available, lookup can suggest a system. Confirm your supplier on your water bill.

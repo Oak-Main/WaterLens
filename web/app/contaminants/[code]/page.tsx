@@ -408,7 +408,9 @@ export default async function ContaminantPage(props: { params: Promise<{ code: s
           <SectionHeading
             eyebrow="Regulatory basis"
             title={`How ${c.name} is regulated`}
-            lede="What the enforceable limit actually obliges a utility to do, and how it differs from the health-based goal it is measured against."
+            lede={actionLevel
+              ? "How the 90th-percentile tap monitoring result can trigger requirements under the EPA Lead and Copper Rule, and how the action level differs from the health goal."
+              : "What the enforceable limit actually obliges a utility to do, and how it differs from the health-based goal it is measured against."}
             id="regulation-heading"
           />
 

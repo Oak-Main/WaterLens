@@ -145,7 +145,8 @@ export interface LookupResult {
   recommended_filters: RecommendedFilter[];
   nitrate_warning: string | null;
   multi_system_warning: boolean;
-  multi_system_count: number;
+  /** Candidate count from a complete ECHO query, or null when coverage is unknown. */
+  multi_system_count: number | null;
   data_freshness: { sdwis_fetched_at: string | null; generated_at: string };
   disclaimers: string[];
   meta: {
@@ -153,6 +154,6 @@ export interface LookupResult {
     engine_version: string;
     /** ZIP_REGISTRY identifies a candidate based on ZIP, with service unconfirmed. */
     resolution: "TEMM" | "ZIP_REGISTRY" | "NONE";
-    registry_status: "candidates" | "no_candidates" | "unverified" | "not_queried";
+    registry_status: "candidates" | "no_candidates" | "unverified" | "unavailable" | "not_queried";
   };
 }

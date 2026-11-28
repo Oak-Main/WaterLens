@@ -24,6 +24,9 @@ export async function runLookup(
 
   // A registry ZIP association suggests candidates. It cannot confirm service.
   const utility = candidates[0] ?? null;
+  const candidateCount = registry?.status === "candidates" || registry?.status === "no_candidates"
+    ? candidates.length
+    : null;
 
   return {
     query: {
@@ -48,7 +51,7 @@ export async function runLookup(
     recommended_filters: [],
     nitrate_warning: null,
     multi_system_warning: candidates.length > 1,
-    multi_system_count: candidates.length,
+    multi_system_count: candidateCount,
     data_freshness: { sdwis_fetched_at: null, generated_at: new Date().toISOString() },
     disclaimers: [
       "Verified measurements and violation records are unavailable in this lookup.",

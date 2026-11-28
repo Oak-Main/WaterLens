@@ -25,9 +25,9 @@ type Row = {
 
 const ROWS: Row[] = [
   {
-    dimension: "Location precision",
-    ours: "EPA ZIP registry with supplier confirmation on your water bill",
-    others: "ZIP codes, which routinely span several different utilities",
+    dimension: "Supplier lookup",
+    ours: "Potential systems from EPA ZIP associations, with coverage limits disclosed",
+    others: "ZIP codes can span several utilities",
   },
   {
     dimension: "How limits are set",

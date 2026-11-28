@@ -85,8 +85,8 @@ export default async function PwsPage({ params }: { params: Promise<{ pwsid: str
               {DISCLAIMER_PLUMBING}
             </p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Button href="/methodology" variant="ghost" size="sm">How we source the data →</Button>
-              <Button href="/pws" variant="ghost" size="sm">All water systems →</Button>
+              <Button href="/methodology" variant="ghost" size="sm">How we source the data <span aria-hidden="true">→</span></Button>
+              <Button href="/pws" variant="ghost" size="sm">All water systems <span aria-hidden="true">→</span></Button>
             </div>
           </Card>
         </Container>

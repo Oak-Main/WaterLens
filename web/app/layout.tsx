@@ -42,8 +42,8 @@ export const metadata: Metadata = {
     "NSF 58 reverse osmosis",
     "PFAS water filter",
     "lead water filter",
-    "EPA SDWIS",
-    "water contaminants by address",
+    "EPA ECHO water system records",
+    "water system lookup by ZIP code",
   ],
   openGraph: {
     type: "website",

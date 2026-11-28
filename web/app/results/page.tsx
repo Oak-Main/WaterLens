@@ -101,7 +101,7 @@ export default async function ResultsPage(
             </div>
           </div>
           <div className="space-y-10">
-            <EmptyState variant="no-match" registryUnverified={result.meta.registry_status === "unverified"} />
+            <EmptyState variant="no-match" registryStatus={result.meta.registry_status} />
             <Disclaimers disclaimers={result.disclaimers} />
           </div>
         </Container>

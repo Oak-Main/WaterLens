@@ -39,6 +39,7 @@ await once(reservation, "listening");
 const port = reservation.address().port;
 await new Promise((resolve) => reservation.close(resolve));
 const origin = `http://127.0.0.1:${port}`;
+const canonicalOrigin = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.taptoglass.com").replace(/\/$/, "");
 const offlineFetch = new URL("./fixtures/offline-fetch.mjs", import.meta.url);
 const server = spawn(process.execPath, ["--import", offlineFetch.href, "node_modules/next/dist/bin/next", "start", "-H", "127.0.0.1", "-p", String(port)], {
   cwd: webRoot,
@@ -100,7 +101,8 @@ try {
 
   async function getHtml(path, expectedStatus = 200) {
     const response = await fetch(origin + path, {
-      headers: { "User-Agent": "Twitterbot/1.0" },
+      // Streamed reports use the crawler response so raw HTML includes metadata.
+      headers: path.startsWith("/results?") ? { "User-Agent": "Twitterbot/1.0" } : {},
       redirect: "manual",
       signal: AbortSignal.timeout(10000),
     });
@@ -120,7 +122,7 @@ try {
     assert.ok(html.includes(official), path);
     assert.match(html, /Verified water quality records unavailable/);
     assert.match(html, /name="robots" content="noindex, follow"/);
-    assert.ok(html.includes(`rel="canonical" href="https://www.taptoglass.com${path}"`), path);
+    assert.ok(html.includes(`rel="canonical" href="${canonicalOrigin}${path}"`), path);
     assert.doesNotMatch(html, /Above federal limit|Active violations|sampling-chart|Filters certified for these contaminants|Data as of/i, path);
   }
 
@@ -135,17 +137,17 @@ try {
   assert.doesNotMatch(directory, /MI0002360|TX0610001|above the federal limit|reported contaminant/i);
   const { html: sitemap } = await getHtml("/sitemap.xml");
   assert.doesNotMatch(sitemap, /<loc>[^<]*\/pws\/[^<]+<\/loc>/);
-  assert.match(sitemap, /<loc>https:\/\/www\.taptoglass\.com\/pws<\/loc>/);
   const directoryEntry = [...sitemap.matchAll(/<url>[\s\S]*?<\/url>/g)].find(
-    ([entry]) => entry.includes("<loc>https://www.taptoglass.com/pws</loc>"),
+    ([entry]) => entry.includes(`<loc>${canonicalOrigin}/pws</loc>`),
   );
   assert.ok(directoryEntry);
   assert.doesNotMatch(directoryEntry[0], /<lastmod>/i);
 
   const { html: home } = await getHtml("/");
   assert.match(home, /Verified records unavailable/);
+  assert.match(home, /The lookup uses your ZIP code, which can have several suppliers/);
   assert.doesNotMatch(home, /MI0002360|180% of MCL|27 µg\/L|data.*weekly refresh/i);
-  assert.doesNotMatch(home, /TEMM service boundaries|address-level tap water quality intelligence/i);
+  assert.doesNotMatch(home, /TEMM service boundaries|address-level tap water quality intelligence|location precision|grade each address match|ZIP 48503|illustrative service area|wql-mains|wql-ping/i);
   const { html: methodology } = await getHtml("/methodology");
   assert.doesNotMatch(methodology, /Point-in-polygon resolution|TEMM service boundaries/i);
 
@@ -154,10 +156,13 @@ try {
     const { html } = await getHtml(path);
     assert.match(html, /<title>[^<]*Action Level/i);
     assert.match(html, /Action level \(90th percentile\)/i);
+    assert.match(html, /90th-percentile tap monitoring result can trigger requirements/);
     assert.match(html, /epa\.gov\/dwreginfo\/lead-and-copper-rule/);
-    assert.doesNotMatch(html, /Legal MCL|Enforceable limit \(MCL\)|Systems reporting|NJ0714001|MI0002310|15 µg\/L/i);
+    assert.doesNotMatch(html, /Legal MCL|enforceable limit|Systems reporting|NJ0714001|MI0002310|15 µg\/L/i);
     checkFilterLinks(html, path);
   }
+  const { html: contaminantDirectory } = await getHtml("/contaminants");
+  assert.match(contaminantDirectory, /Action level — Lead and Copper Rule/);
   const { html: contaminantControl } = await getHtml("/contaminants/1005");
   assert.match(contaminantControl, /Legal MCL/);
 
@@ -210,32 +215,50 @@ try {
       assert.equal(report.meta.resolution, "ZIP_REGISTRY");
       assert.equal(report.meta.registry_status, "candidates");
       assert.equal(report.multi_system_warning, pwsid === "NJ0714001");
+      assert.equal(report.multi_system_count, pwsid === "NJ0714001" ? 2 : 1);
       checkUnavailablePayload(report);
     }
   }
 
+  const pagedResponse = await fetch(origin + "/api/lookup?address=00005");
+  assert.equal(pagedResponse.status, 200);
+  const pagedReport = await pagedResponse.json();
+  assert.equal(pagedReport.utility?.pwsid, "NJ0000006", "the larger valid candidate is on page two");
+  assert.equal(pagedReport.meta.registry_status, "candidates");
+  assert.equal(pagedReport.multi_system_count, 2);
+  assert.equal(pagedReport.multi_system_warning, true);
+  checkUnavailablePayload(pagedReport);
+  const { html: pagedHtml } = await getHtml(reportPath("00005"));
+  checkCandidateHtml(pagedHtml, "NJ0000006");
+  assert.match(pagedHtml, /The ZIP registry returned multiple potential systems/);
+
   // Empty, mismatched, capped and failed provider responses never present a
   // confirmed address match, violation count, or clean-water verdict.
-  for (const [address, pwsid, status] of [
-    ["QA FIXTURE 00003", null, "no_candidates"],
-    ["QA FIXTURE 00001", null, "unverified"],
-    ["QA FIXTURE 00002", "NJ0714001", "candidates"],
-    ["QA FIXTURE 00004", null, "unverified"],
-    ["QA FIXTURE 78701", null, "unverified"],
-    ["NEWARK QA WITH NO ZIP", null, "not_queried"],
-    ["07102 QA STREET WITHOUT ZIP", null, "not_queried"],
-    ["48503 QA STREET 07102-1234", "NJ0714001", "candidates"],
+  for (const [address, pwsid, status, count] of [
+    ["QA FIXTURE 00003", null, "no_candidates", 0],
+    ["QA FIXTURE 00001", null, "unverified", null],
+    ["QA FIXTURE 00002", null, "unverified", null],
+    ["QA FIXTURE 00004", null, "unverified", null],
+    ["QA FIXTURE 00006", null, "unavailable", null],
+    ["QA FIXTURE 00007", null, "unverified", null],
+    ["QA FIXTURE 00008", null, "unverified", null],
+    ["QA FIXTURE 78701", null, "unavailable", null],
+    ["NEWARK QA WITH NO ZIP", null, "not_queried", null],
+    ["07102 QA STREET WITHOUT ZIP", null, "not_queried", null],
+    ["48503 QA STREET 07102-1234", "NJ0714001", "candidates", 2],
   ]) {
     const response = await fetch(origin + "/api/lookup?" + new URLSearchParams({ address }));
     assert.equal(response.status, 200);
     const report = await response.json();
     assert.equal(report.match.pwsid, pwsid);
     assert.equal(report.meta.registry_status, status);
+    assert.equal(report.multi_system_count, count);
     checkUnavailablePayload(report);
     const { html } = await getHtml(reportPath(address));
     if (pwsid) checkCandidateHtml(html, pwsid);
     else assert.match(html, /We couldn(?:'|&#x27;)t confirm your water system/);
     if (status === "unverified") assert.match(html, /EPA ZIP coverage for this lookup is unverified/);
+    if (status === "unavailable") assert.match(html, /EPA ZIP coverage is temporarily unavailable/);
   }
   console.log("PASS public records, directory, reference thresholds, sitemap, and offline lookups");
 
@@ -262,4 +285,5 @@ try {
     server.kill();
     await stopped;
   }
+  assert.doesNotMatch(output, /Unexpected offline ECHO request:/, output);
 }

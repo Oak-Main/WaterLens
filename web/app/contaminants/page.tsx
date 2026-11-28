@@ -97,7 +97,7 @@ export default function ContaminantsIndexPage() {
 
           <Card className="mt-8 max-w-3xl p-6">
             <h2 className="text-title-2 text-ink-900 dark:text-white">
-              MCL vs. MCLG — two different numbers
+              Legal limits, action levels, and health goals
             </h2>
             <dl className="mt-4 space-y-4 text-sm leading-relaxed text-ink-600 dark:text-ink-300">
               <div>
@@ -108,6 +108,15 @@ export default function ContaminantsIndexPage() {
                   The enforceable legal limit a utility may not exceed. It is set as
                   close to the health goal as is feasible given available treatment
                   technology and cost.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-semibold text-ink-800 dark:text-ink-100">
+                  Action level — Lead and Copper Rule
+                </dt>
+                <dd>
+                  When the 90th-percentile result from a water system&rsquo;s tap monitoring exceeds this threshold,
+                  the system must take additional actions under the rule.
                 </dd>
               </div>
               <div>

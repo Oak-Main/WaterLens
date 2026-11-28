@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui";
 import { LAB_TEST_OFFER } from "@/lib/offers";
 import { epaWaterSystemUrl } from "@/lib/public-water-systems";
+import type { LookupResult } from "@/lib/types";
 
 const LAB_TEST = LAB_TEST_OFFER;
 
@@ -44,16 +45,23 @@ function DocumentIcon() {
  */
 export type EmptyVariant = "clean" | "no-samples" | "no-match";
 
+type RegistryStatus = LookupResult["meta"]["registry_status"];
+const coverageNotes: Partial<Record<RegistryStatus, string>> = {
+  no_candidates: "EPA ECHO returned no active community water systems for this ZIP.",
+  unverified: "EPA ZIP coverage for this lookup is unverified.",
+  unavailable: "EPA ZIP coverage is temporarily unavailable.",
+};
+
 export function EmptyState({
   variant,
   utilityName,
   pwsid,
-  registryUnverified = false,
+  registryStatus = "not_queried",
 }: {
   variant: EmptyVariant;
   utilityName?: string | null;
   pwsid?: string;
-  registryUnverified?: boolean;
+  registryStatus?: RegistryStatus;
 }) {
   const tone =
     variant === "clean"
@@ -99,7 +107,7 @@ export function EmptyState({
           </>
         ) : (
           <>
-            {registryUnverified ? "EPA ZIP coverage for this lookup is unverified. " : "EPA ZIP coverage varies. "}
+            {coverageNotes[registryStatus] ?? "EPA ZIP coverage varies."}{" "}
             Check the utility name on your water bill,
             browse the water systems directory, or consult the EPA service-area map.
           </>

@@ -68,9 +68,7 @@ function ScaleIcon() {
 }
 
 /**
- * Each signal carries its own data vintage. The hero no longer runs a trust row,
- * so this band is the page's only provenance surface above the fold — a bare
- * label without a vintage would be a claim rather than a citation.
+ * Each signal names its source or basis, and includes a date when supported.
  */
 const SIGNALS: { icon: ReactNode; label: string; vintage: string }[] = [
   {
@@ -81,7 +79,7 @@ const SIGNALS: { icon: ReactNode; label: string; vintage: string }[] = [
   {
     icon: <BoundaryIcon />,
     label: "ZIP-based utility candidates",
-    vintage: "Confirm the utility on your water bill",
+    vintage: "EPA ECHO ZIP associations · confirm on your water bill",
   },
   {
     icon: <BadgeCheckIcon />,

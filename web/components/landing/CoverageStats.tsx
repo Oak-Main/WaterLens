@@ -234,7 +234,7 @@ export function CoverageStats() {
               tone="inverse"
               eyebrow="Coverage & rigor"
               title="Grounded in public data and independent standards"
-              lede="Every figure here is derived from the dataset this site runs on. We track regulated contaminants, audit the NSF/ANSI standards that actually govern removal, and grade each address match on a transparent confidence scale."
+              lede="Explore federal contaminant references and the independent NSF/ANSI certifications listed in our filter registry."
             />
           </Reveal>
 

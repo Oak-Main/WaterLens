@@ -140,23 +140,10 @@ const config: Config = {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
-        // One slow dash travelling each distribution main in the hero plate.
-        "wql-flow": {
-          "0%": { strokeDashoffset: "0" },
-          "100%": { strokeDashoffset: "-223" },
-        },
-        // A single calm expanding ring at each sampling node.
-        "wql-ping": {
-          "0%": { transform: "scale(1)", opacity: "0.55" },
-          "70%": { transform: "scale(3.4)", opacity: "0" },
-          "100%": { transform: "scale(3.4)", opacity: "0" },
-        },
       },
       animation: {
         "fade-up": "fade-up 0.55s cubic-bezier(0.22,0.61,0.36,1) both",
         shimmer: "shimmer 1.6s infinite",
-        "wql-flow": "wql-flow 9s linear infinite",
-        "wql-ping": "wql-ping 4s cubic-bezier(0.16,1,0.3,1) infinite",
       },
     },
   },
