@@ -153,5 +153,6 @@ export interface LookupResult {
     engine_version: string;
     /** ZIP_REGISTRY identifies a candidate based on ZIP, with service unconfirmed. */
     resolution: "TEMM" | "ZIP_REGISTRY" | "NONE";
+    registry_status: "candidates" | "no_candidates" | "unverified" | "not_queried";
   };
 }

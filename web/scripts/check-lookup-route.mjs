@@ -200,6 +200,7 @@ try {
       const report = await response.json();
       assert.equal(report.utility.pwsid, pwsid);
       assert.equal(report.meta.resolution, "ZIP_REGISTRY");
+      assert.equal(report.meta.registry_status, "candidates");
       assert.equal(report.multi_system_warning, pwsid === "NJ0714001");
       checkUnavailablePayload(report);
     }
@@ -207,21 +208,26 @@ try {
 
   // Empty, mismatched, capped and failed provider responses never present a
   // confirmed address match, violation count, or clean-water verdict.
-  for (const [address, pwsid] of [
-    ["QA FIXTURE 00003", null],
-    ["QA FIXTURE 00001", null],
-    ["QA FIXTURE 00002", "NJ0714001"],
-    ["QA FIXTURE 78701", null],
-    ["NEWARK QA WITH NO ZIP", null],
+  for (const [address, pwsid, status] of [
+    ["QA FIXTURE 00003", null, "no_candidates"],
+    ["QA FIXTURE 00001", null, "unverified"],
+    ["QA FIXTURE 00002", "NJ0714001", "candidates"],
+    ["QA FIXTURE 00004", null, "unverified"],
+    ["QA FIXTURE 78701", null, "unverified"],
+    ["NEWARK QA WITH NO ZIP", null, "not_queried"],
+    ["07102 QA STREET WITHOUT ZIP", null, "not_queried"],
+    ["48503 QA STREET 07102-1234", "NJ0714001", "candidates"],
   ]) {
     const response = await fetch(origin + "/api/lookup?" + new URLSearchParams({ address }));
     assert.equal(response.status, 200);
     const report = await response.json();
     assert.equal(report.match.pwsid, pwsid);
+    assert.equal(report.meta.registry_status, status);
     checkUnavailablePayload(report);
     const { html } = await getHtml(reportPath(address));
     if (pwsid) checkCandidateHtml(html, pwsid);
     else assert.match(html, /We couldn(?:'|&#x27;)t confirm your water system/);
+    if (status === "unverified") assert.match(html, /EPA ZIP coverage for this lookup is unverified/);
   }
   console.log("PASS public records, directory, reference thresholds, sitemap, and offline lookups");
 

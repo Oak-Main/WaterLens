@@ -48,10 +48,12 @@ export function EmptyState({
   variant,
   utilityName,
   pwsid,
+  registryUnverified = false,
 }: {
   variant: EmptyVariant;
   utilityName?: string | null;
   pwsid?: string;
+  registryUnverified?: boolean;
 }) {
   const tone =
     variant === "clean"
@@ -97,7 +99,8 @@ export function EmptyState({
           </>
         ) : (
           <>
-            EPA ZIP coverage varies. Check the utility name on your water bill,
+            {registryUnverified ? "EPA ZIP coverage for this lookup is unverified. " : "EPA ZIP coverage varies. "}
+            Check the utility name on your water bill,
             browse the water systems directory, or consult the EPA service-area map.
           </>
         )}

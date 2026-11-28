@@ -16,8 +16,11 @@ export async function runLookup(
 ): Promise<LookupResult> {
   const zipOnly = /^\d{5}(?:-\d{4})?$/.test(address);
   const geo = zipOnly ? null : await geocode(address);
-  const zip = geo?.zip?.match(/^\d{5}$/)?.[0] ?? address.match(/\b(\d{5})(?:-\d{4})?\b/)?.[1];
-  const candidates = zip ? await fetchZipCandidates(zip) : [];
+  // Without a Census ZIP, use only a terminal postal code. A leading number
+  // may be a street number, even when it has five digits.
+  const zip = geo?.zip?.match(/^\d{5}$/)?.[0] ?? address.match(/(?:^|[\s,])(\d{5})(?:-\d{4})?\s*$/)?.[1];
+  const registry = zip ? await fetchZipCandidates(zip) : null;
+  const candidates = registry?.systems ?? [];
 
   // A registry ZIP association suggests candidates. It cannot confirm service.
   const utility = candidates[0] ?? null;
@@ -57,6 +60,7 @@ export async function runLookup(
       cache_hit: false,
       engine_version: ENGINE_VERSION,
       resolution: utility ? "ZIP_REGISTRY" : "NONE",
+      registry_status: registry?.status ?? "not_queried",
     },
   };
 }

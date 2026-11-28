@@ -42,18 +42,25 @@ async function echo(
   return Results && !Results.Error ? Results : null;
 }
 
-export async function fetchZipCandidates(zip: string): Promise<WaterSystem[]> {
+type ZipRegistryResult = {
+  status: "candidates" | "no_candidates" | "unverified";
+  systems: WaterSystem[];
+};
+
+const UNVERIFIED: ZipRegistryResult = { status: "unverified", systems: [] };
+
+export async function fetchZipCandidates(zip: string): Promise<ZipRegistryResult> {
   const signal = AbortSignal.timeout(TIMEOUT);
   try {
     const search = await echo("get_systems", { p_zip: zip, p_systyp: "CWS", p_act: "Y" }, signal);
-    if (!search?.QueryID || !/^\d+$/.test(search.QueryID) || !(Number(search.QueryRows) > 0)) {
-      return [];
-    }
+    if (!search || !search.QueryRows || !/^\d+$/.test(search.QueryRows)) return UNVERIFIED;
+    if (Number(search.QueryRows) === 0) return { status: "no_candidates", systems: [] };
+    if (!search.QueryID || !/^\d+$/.test(search.QueryID)) return UNVERIFIED;
 
     // Use only validated records in the first page. The query can cover more
     // systems than are returned here, and ZIP coverage cannot prove service.
     const page = await echo("get_qid", { qid: search.QueryID, pageno: "1", qcolumns: COLUMNS }, signal);
-    if (page?.QueryID !== search.QueryID || !Array.isArray(page.WaterSystems)) return [];
+    if (page?.QueryID !== search.QueryID || !Array.isArray(page.WaterSystems)) return UNVERIFIED;
     const systems = new Map<string, WaterSystem>();
     for (const row of page.WaterSystems) {
       if (
@@ -79,8 +86,12 @@ export async function fetchZipCandidates(zip: string): Promise<WaterSystem[]> {
         primary_source: row.PrimarySourceCode ?? null,
       });
     }
-    return [...systems.values()].sort((a, b) => (b.population_served ?? 0) - (a.population_served ?? 0));
+    if (!systems.size) return UNVERIFIED;
+    return {
+      status: "candidates",
+      systems: [...systems.values()].sort((a, b) => (b.population_served ?? 0) - (a.population_served ?? 0)),
+    };
   } catch {
-    return [];
+    return UNVERIFIED;
   }
 }

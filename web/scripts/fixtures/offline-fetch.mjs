@@ -9,6 +9,7 @@ const SYSTEMS_BY_ZIP = {
   "48503": [{ PWSId: "MI0002310", PWSName: "City of Flint", StateCode: "MI" }],
   "00001": [{ PWSId: "NJ0714001", PWSName: "Newark Water Department", ZipCodesServed: "07102" }],
   "00002": [{ PWSId: "NJ0714001", PWSName: "Newark Water Department" }],
+  "00004": [{ PWSId: "NJ0000001", PWSName: "QA fixture with incomplete ZIP coverage", ZipCodesServed: undefined }],
 };
 
 globalThis.fetch = (input, init) => {
