@@ -70,26 +70,26 @@ function ScaleIcon() {
 /**
  * Each signal names its source or basis, and includes a date when supported.
  */
-const SIGNALS: { icon: ReactNode; label: string; vintage: string }[] = [
+const SIGNALS: { icon: ReactNode; label: string; detail: string }[] = [
   {
     icon: <DatabaseIcon />,
     label: "EPA system registry",
-    vintage: "EPA ECHO Drinking Water System Search",
+    detail: "EPA ECHO Drinking Water System Search",
   },
   {
     icon: <BoundaryIcon />,
     label: "ZIP-based utility candidates",
-    vintage: "EPA ECHO ZIP associations · confirm on your water bill",
+    detail: "EPA ECHO ZIP associations · confirm on your water bill",
   },
   {
     icon: <BadgeCheckIcon />,
     label: "Independent NSF/ANSI verification",
-    vintage: "NSF · WQA · IAPMO · audited quarterly",
+    detail: "NSF · WQA · IAPMO · audited quarterly",
   },
   {
     icon: <ScaleIcon />,
     label: "No fear-based ratings",
-    vintage: "Federal MCLs · no proprietary scores",
+    detail: "Federal MCLs · no proprietary scores",
   },
 ];
 
@@ -118,7 +118,7 @@ export function TrustStrip() {
                     {s.label}
                   </span>
                   <span className="mt-1 block font-mono text-[11px] leading-snug text-ink-500 dark:text-ink-400">
-                    {s.vintage}
+                    {s.detail}
                   </span>
                 </span>
               </li>
